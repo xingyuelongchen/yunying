@@ -23,7 +23,7 @@
             </el-menu-item>
           </el-menu>
         </div>
-        <div class="app-body">
+        <div :class="{'app-body':true,'active':dialogFormVisible}">
           <div class="app-head">
             <div class="item">
               <i class="el-icon-s-unfold" @click="isCollapse = false" v-if="isCollapse"></i>
@@ -35,193 +35,189 @@
               <el-tag type="primary" size="mini" effect="dark" @click="logout" class="logout">退出</el-tag>
             </div>
           </div>
-          <div class="app-search">
-            <el-form inline size="small" status-icon>
-              <el-form-item prop="phone" label="手机号">
-                <el-input v-model.number="search.phone" minlength="11" maxlength="11" />
-              </el-form-item>
-              <el-form-item prop="status" label="审核状态">
-                <el-select v-model="search.status">
-                  <el-option label="待补充资料" value="-1"></el-option>
-                  <el-option label="待审核" value="0"></el-option>
-                  <el-option label="已认证" value="1"></el-option>
-                  <el-option label="认证失败" value="2"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item>
-                <el-button type="success" @click="getData">搜索</el-button>
-              </el-form-item>
-            </el-form>
-          </div>
-          <div class="app-content">
-            <el-table
-              max-height="calc(100vh - 160px)"
-              tooltip-effect="dark"
-              class="table-box"
-              height="100%"
-              border
-              stripe
-              show-summary
-              :data="tableData"
-              :summary-method="getSummaries"
-            >
-              <el-table-column
-                :resizable="false"
-                show-overflow-tooltip
-                prop="id"
-                label="ID"
-                width="60px"
-                align="center"
-              />
-              <el-table-column
-                :resizable="false"
-                show-overflow-tooltip
-                prop="name"
-                label="姓名"
-                width="90px"
-              />
-              <el-table-column
-                :resizable="false"
-                show-overflow-tooltip
-                prop="phone"
-                label="手机号码"
-                align="center"
-                width="120px"
-              />
-              <el-table-column
-                :resizable="false"
-                show-overflow-tooltip
-                prop="mid"
-                label="mid"
-                align="center"
-                width="100px"
-              />
-              <el-table-column
-                :resizable="false"
-                show-overflow-tooltip
-                prop="applyTime"
-                label="申请时间"
-                align="center"
-              />
-              <el-table-column
-                :resizable="false"
-                show-overflow-tooltip
-                prop="updateTime"
-                label="更新时间"
-                align="center"
-              />
-              <el-table-column
-                :resizable="false"
-                show-overflow-tooltip
-                prop="statusName"
-                label="审核状态"
-                align="center"
-                width="100px"
-              />
-              <el-table-column
-                :resizable="false"
-                show-overflow-tooltip
-                prop="msg"
-                label="备注"
-                align="left"
-              />
-              <el-table-column width="100" label="操作" fixed="right" header-align="center">
-                <template slot-scope="scope">
-                  <el-button size="mini" type="danger" @click="views(scope.row.id)">审核</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-          <div class="app-page">
-            <el-pagination
-              background
-              layout="prev, pager, next"
-              :total="page.total"
-              @current-change="currentPage"
-              hide-on-single-page
-            ></el-pagination>
+          <template v-if="!dialogFormVisible">
+            <div class="app-search">
+              <el-form inline size="small" status-icon>
+                <el-form-item prop="phone" label="手机号">
+                  <el-input v-model.number="search.phone" minlength="11" maxlength="11" />
+                </el-form-item>
+                <el-form-item prop="status" label="审核状态">
+                  <el-select v-model="search.status">
+                    <el-option label="全部" value></el-option>
+                    <el-option label="待补充资料" value="-1"></el-option>
+                    <el-option label="待审核" value="0"></el-option>
+                    <el-option label="已认证" value="1"></el-option>
+                    <el-option label="认证失败" value="2"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="success" @click="getData">搜索</el-button>
+                </el-form-item>
+              </el-form>
+            </div>
+            <div class="app-content">
+              <el-table
+                max-height="calc(100vh - 160px)"
+                tooltip-effect="dark"
+                class="table-box"
+                height="100%"
+                border
+                stripe
+                show-summary
+                :data="tableData"
+                :summary-method="getSummaries"
+              >
+                <el-table-column
+                  :resizable="false"
+                  show-overflow-tooltip
+                  prop="id"
+                  label="ID"
+                  width="60px"
+                  align="center"
+                />
+                <el-table-column
+                  :resizable="false"
+                  show-overflow-tooltip
+                  prop="name"
+                  label="姓名"
+                  width="90px"
+                />
+                <el-table-column
+                  :resizable="false"
+                  show-overflow-tooltip
+                  prop="phone"
+                  label="手机号码"
+                  align="center"
+                  width="120px"
+                />
+                <el-table-column
+                  :resizable="false"
+                  show-overflow-tooltip
+                  prop="mid"
+                  label="mid"
+                  align="center"
+                  width="100px"
+                />
+                <el-table-column
+                  :resizable="false"
+                  show-overflow-tooltip
+                  prop="applyTime"
+                  label="申请时间"
+                  align="center"
+                />
+                <el-table-column
+                  :resizable="false"
+                  show-overflow-tooltip
+                  prop="updateTime"
+                  label="更新时间"
+                  align="center"
+                />
+                <el-table-column
+                  :resizable="false"
+                  show-overflow-tooltip
+                  prop="statusName"
+                  label="审核状态"
+                  align="center"
+                  width="100px"
+                />
+                <el-table-column
+                  :resizable="false"
+                  show-overflow-tooltip
+                  prop="msg"
+                  label="备注"
+                  align="left"
+                />
+                <el-table-column width="100" label="操作" fixed="right" header-align="center">
+                  <template slot-scope="scope">
+                    <el-button size="mini" type="danger" @click="views(scope.row.id)">审核</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+            <div class="app-page">
+              <el-pagination
+                background
+                layout="prev, pager, next"
+                :total="page.total"
+                @current-change="currentPage"
+                hide-on-single-page
+              ></el-pagination>
+            </div>
+          </template>
+          <div v-else style="overflow:auto;padding:20px ">
+            <div style="padding:10px 10px">
+              <span>逐张审核：</span>
+              <el-switch v-model="onKey" />
+              <el-button
+                style="margin-left:20px"
+                @click="dialogFormVisible = false"
+                size="mini"
+                type="danger"
+              >取消</el-button>
+            </div>
+            <div class="image">
+              <template v-for="(item,index) in list">
+                <div class="item" :key="index">
+                  <div class="img">
+                    <el-image :src="item.url" fit="cover" :preview-src-list="[item.url]" />
+                  </div>
+                  <div class="content">
+                    <div class="info">
+                      <div>审核状态：{{item.status || '暂无状态'}}</div>
+                      <div>图片类型：{{item.type | mapType}}</div>
+                      <div>所在城市：{{item.cityName}}</div>
+                      <div>ID：{{item.id}}</div>
+                    </div>
+                    <template v-if="onKey">
+                      <div class="radio">
+                        <span>是否通过：</span>
+                        <el-radio v-model="item.pass" type="success" :label="true">通过</el-radio>
+                        <el-radio v-model="item.pass" type="danger" :label="false">拒绝</el-radio>
+                      </div>
+                      <div class="msg">
+                        <el-input
+                          type="textarea"
+                          v-model="item.msg"
+                          resize="none"
+                          v-if="!item.pass"
+                          placeholder="请输入审核意见"
+                          :rules="{required:true,message:'请输入审核意见'}"
+                        />
+                      </div>
+                      <el-button
+                        @click="onSubmit(item)"
+                        type="primary"
+                        style="width:100%;margin:10px auto"
+                      >提交</el-button>
+                    </template>
+                  </div>
+                </div>
+              </template>
+            </div>
+            <div class="input" v-if="!onKey">
+              <div class="radio">
+                <span>是否通过：</span>
+                <el-radio v-model="shenForm.pass" :label="true">通过</el-radio>
+                <el-radio v-model="shenForm.pass" :label="false">拒绝</el-radio>
+              </div>
+              <div class="text" v-if="!shenForm.pass">
+                <span>审核意见：</span>
+                <el-input
+                  type="textarea"
+                  v-model="shenForm.msg"
+                  resize="none"
+                  placeholder="请输入审核意见"
+                />
+              </div>
+            </div>
+            <div class="btn">
+              <el-button type="danger" @click="dialogFormVisible = false">取消</el-button>
+              <el-button v-if="!onKey" type="success" @click="onSubmit(shenForm)">提交</el-button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <el-dialog
-      title="审核"
-      :visible.sync="dialogFormVisible"
-      width="1000px"
-      height="1000px"
-      :close-on-click-modal="false"
-    >
-      <div>
-        <!-- <div style="margin:20px 0">name：{{details.idCard}}</div>
-        <div style="margin:20px 0">idCard：{{details.idCard}}</div>
-        <div style="margin:20px 0">companyName：{{details.companyName}}</div>
-        <div style="margin:20px 0">companyAddress：{{details.cityName}}{{details.companyAddress}}</div>-->
-        <div class="image">
-          <el-carousel
-            :arrow="onKey?'never':'always'"
-            :height="onKey?'540px':'400px'"
-            :loop="false"
-            :autoplay="false"
-            ref="swipe"
-            indicator-position="none"
-            @change="changeSwipe"
-          >
-            <el-carousel-item v-for="(item,index) in details.imgs" :key="index">
-              <div class="img">
-                <el-image
-                  fit="cover"
-                  :preview-src-list="listImg"
-                  :src="item.url"
-                  style="height:400px"
-                />
-              </div>
-              <el-form
-                :model="shenForm"
-                status-icon
-                :ref="'shen'+index"
-                label-width="100px"
-                v-if="onKey"
-              >
-                <el-form-item label="是否通过:" prop="pass" :rules="{required:true,message:'必填项'}">
-                  <el-radio v-model="shenForm.pass" :label="true">通过</el-radio>
-                  <el-radio v-model="shenForm.pass" :label="false">拒绝</el-radio>
-                </el-form-item>
-                <el-form-item
-                  label="拒绝原因:"
-                  prop="msg"
-                  v-if="!shenForm.pass"
-                  :rules="{required:!shenForm.pass,message:'必填项'}"
-                >
-                  <el-input type="textarea" v-model="shenForm.msg" autocomplete="on"></el-input>
-                </el-form-item>
-              </el-form>
-            </el-carousel-item>
-          </el-carousel>
-          <el-form :model="shenForm" status-icon ref="shen" label-width="100px" v-if="!onKey">
-            <el-form-item label="是否通过" prop="pass" :rules="{required:true,message:'必填项'}">
-              <el-radio v-model="shenForm.pass" :label="true">通过</el-radio>
-              <el-radio v-model="shenForm.pass" :label="false">拒绝</el-radio>
-            </el-form-item>
-            <el-form-item
-              label="拒绝原因"
-              prop="msg"
-              v-if="!shenForm.pass"
-              :rules="{required:!shenForm.pass,message:'必填项'}"
-            >
-              <el-input type="textarea" v-model="shenForm.msg " autocomplete="on"></el-input>
-            </el-form-item>
-          </el-form>
-        </div>
-        <div style="text-align:center">
-          <el-button
-            @click="onKey=!onKey"
-            type="success"
-            style="width:150px"
-          >{{onKey?'一键审核':'逐个审核'}}</el-button>
-          <el-button @click="shen" type="primary" style="width:150px">提交</el-button>
-        </div>
-      </div>
-    </el-dialog>
   </div>
 </template>
 <style lang="less">
@@ -260,6 +256,10 @@
     flex: auto;
     display: grid;
     grid-template-rows: 60px 60px auto 40px;
+    &.active {
+      grid-template-rows: 60px auto;
+      overflow: hidden;
+    }
     .app-head {
       display: flex;
       justify-content: space-between;
@@ -307,6 +307,58 @@
     }
   }
 }
+.image {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  .item {
+    width: 260px;
+    border: 1px solid #ccc;
+    margin: 5px;
+    .img {
+      width: 260px;
+      height: 200px;
+      overflow: hidden;
+      .el-image {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .content {
+      padding: 20px 20px 10px;
+      .info {
+        > div {
+          margin-bottom: 10px;
+        }
+      }
+      .radio {
+        margin-bottom: 10px;
+      }
+    }
+  }
+}
+.btn {
+  text-align: center;
+  overflow: hidden;
+  margin: 20px auto;
+}
+.input {
+  border-top: 1px dashed #ccc;
+  margin-top: 20px;
+  .radio {
+    padding: 20px 10px;
+  }
+  .el-textarea {
+    width: 300px;
+  }
+  .text {
+    padding: 0 10px;
+    span {
+      vertical-align: top;
+    }
+  }
+}
 </style>
 
 <script>
@@ -314,10 +366,8 @@ export default {
   name: "home",
   data() {
     return {
-      index: 0,
-      details: {},
-      listImg: [],
-      onKey: false,
+      list: [],
+      onKey: true,
       tableData: [],
       isCollapse: false,
       shenForm: { pass: true, type: null },
@@ -365,7 +415,7 @@ export default {
             this.getData();
           } else {
             this.$alert(data.msg, "登录错误", {
-              confirmButtonText: "确定", 
+              confirmButtonText: "确定",
               type: "warning"
             });
           }
@@ -377,9 +427,6 @@ export default {
     currentPage(val) {
       this.page.pageNum = val - 1;
       this.getData();
-    },
-    changeSwipe(val) {
-      this.index = val;
     },
     getSummaries(val) {
       return val;
@@ -399,36 +446,57 @@ export default {
         params: { id: id }
       });
       if (data.code == 200) {
-        this.details = data.data;
+        this.list = data.data.imgs.map(e => {
+          return {
+            ...data.data,
+            ...e,
+            pass: true
+          };
+        });
         this.dialogFormVisible = true;
         this.shenForm.id = id;
-        this.listImg = data.data.imgs.map(e => e.url);
       }
     },
-    async shen() {
-      try {
-        if (!this.onKey && (await this.$refs["shen"].validate()));
-        if (this.onKey) {
-          let d = "shen" + this.index;
-          await this.$refs[d][0].validate();
-          this.shenForm.type = this.details.imgs[this.index].type;
-        }
-        let { data } = await this.axios("/backend/audit/audit", {
-          method: "post",
-          params: this.shenForm
+    async onSubmit(form) {
+      form = {
+        id: form.id,
+        type: form.type,
+        msg: form.msg,
+        pass: form.pass
+      };
+      if (!form.pass && !form.msg) {
+        this.$alert("请输入审核意见", "提示", {
+          type: "warning"
         });
-        if (data.code == 200) {
-          this.shenForm = { pass: true };
-          if (this.onKey) this.$refs["swipe"].next();
-          else this.dialogFormVisible = false;
-          this.getData();
-          this.$message.success("审核成功");
-        } else {
-          this.$message.error(data.msg);
-        }
-      } catch (err) {
-        console.log(err);
+        return;
       }
+      let { data } = await this.axios("/backend/audit/audit", {
+        method: "post",
+        params: form
+      });
+      if (data.code == 200) {
+        if (!this.onKey) {
+          this.dialogFormVisible = false;
+          this.shenForm = {};
+        }
+        this.getData();
+        this.$message.success("审核成功");
+      } else {
+        this.$message.error(data.msg);
+      }
+    }
+  },
+  filters: {
+    mapType(val) {
+      return {
+        person: "身份证人像面",
+        country: "身份证国徽面",
+        hand: "手持身份证",
+        company: "公司照片",
+        business: "机构营业执照",
+        contract: "劳动合同",
+        work: "工牌或名片"
+      }[val];
     }
   }
 };

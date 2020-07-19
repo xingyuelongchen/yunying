@@ -7,7 +7,7 @@ import axios from 'axios';
 import md5 from 'js-md5';
 Vue.config.productionTip = false;
 axios.defaults.withCredentials = true;
-if (Date.now() < new Date('2020-07-20 23:59').getTime()) {
+if (Date.now() < new Date('2020-07-21 23:59').getTime()) {
   axios.defaults['baseURL'] = process.env.NODE_ENV === 'development' ? '' : 'http://test.congrong-inc.com/manager';
   Vue.use(Element)
   Vue.prototype.axios = axios;
