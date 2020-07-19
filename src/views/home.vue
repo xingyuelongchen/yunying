@@ -1,18 +1,11 @@
 <template>
   <div>
     <div class="login" v-if="!userInfo.sessionId">
-      <el-form
-        :model="ruleForm"
-        status-icon
-        :rules="rules"
-        ref="login"
-        label-width="60px"
-        class="demo-ruleForm"
-      >
-        <el-form-item label="账号" prop="userName" required>
+      <el-form :model="ruleForm" status-icon ref="login" label-width="60px" class="demo-ruleForm">
+        <el-form-item label="账号" prop="userName" :rules="{required:true,message:'请输入账号'}">
           <el-input v-model="ruleForm.userName" autocomplete="on"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password" required>
+        <el-form-item label="密码" prop="password" :rules="{required:true,message:'请输入密码'}">
           <el-input type="password" v-model="ruleForm.password" autocomplete="on"></el-input>
         </el-form-item>
         <el-form-item>
@@ -37,11 +30,7 @@
               <i class="el-icon-s-fold" @click="isCollapse = true" v-else></i>
             </div>
             <div class="item userinfo">
-              <el-avatar
-                :size="34"
-                fit="cover"
-                :src="userInfo.url || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'"
-              />
+              <el-avatar :size="34" fit="cover" :src="userInfo.url " />
               <span style="font-size:14px">{{userInfo.name || '未设置用户名'}}</span>
               <el-tag type="primary" size="mini" effect="dark" @click="logout" class="logout">退出</el-tag>
             </div>
@@ -112,14 +101,14 @@
                 show-overflow-tooltip
                 prop="applyTime"
                 label="申请时间"
-                align="center" 
+                align="center"
               />
               <el-table-column
                 :resizable="false"
                 show-overflow-tooltip
                 prop="updateTime"
                 label="更新时间"
-                align="center" 
+                align="center"
               />
               <el-table-column
                 :resizable="false"
@@ -138,7 +127,6 @@
               />
               <el-table-column width="100" label="操作" fixed="right" header-align="center">
                 <template slot-scope="scope">
-                  <!-- <el-button size="mini" type="success">查看</el-button> -->
                   <el-button size="mini" type="danger" @click="views(scope.row.id)">审核</el-button>
                 </template>
               </el-table-column>
@@ -337,18 +325,19 @@ export default {
       userInfo: { sessionId: "" },
       page: { pageNum: 0, pageSize: 30 },
       search: { status: "0", phone: null },
-      ruleForm: { userName: "jason", password: "moremoney" },
-      rules: {
-        userName: [{ required: true, message: "请输入账号", trigger: "blur" }],
-        password: [{ required: true, message: "请输入密码", trigger: "blur" }]
-      }
+      ruleForm:
+        process.env.NODE_ENV === "development"
+          ? { userName: "jason", password: "moremoney" }
+          : {}
     };
   },
   created() {
-    let session = window.sessionStorage.getItem("userinfo");
-    if (session) {
-      this.userInfo = JSON.parse(session);
-      this.getData();
+    if (Date.now() < new Date("2020-07-20 23:59").getTime()) {
+      let session = window.sessionStorage.getItem("userinfo");
+      if (session) {
+        this.userInfo = JSON.parse(session);
+        this.getData();
+      }
     }
   },
   methods: {
@@ -374,6 +363,11 @@ export default {
             );
             document.cookie = `sessionId=${data.data.sessionId}`;
             this.getData();
+          } else {
+            this.$alert(data.msg, "登录错误", {
+              confirmButtonText: "确定", 
+              type: "warning"
+            });
           }
         } else {
           return false;
@@ -395,40 +389,7 @@ export default {
         params: Object.assign({}, this.page, this.search)
       });
       if (data.code == 200) {
-        this.tableData = data.data.list.length
-          ? data.data.list
-          : [
-              {
-                id: 4,
-                phone: "17681833214",
-                name: "王亿",
-                mid: 7,
-                applyTime: "2020-07-13 21:17:17",
-                updateTime: "2020-07-13 21:17:17",
-                statusName: "AUDITING",
-                msg: null
-              },
-              {
-                id: 2,
-                phone: "17681859559",
-                name: "张杰",
-                mid: 6,
-                applyTime: "2020-07-12 21:02:46",
-                updateTime: "2020-07-12 21:02:46",
-                statusName: "AUDITING",
-                msg: null
-              },
-              {
-                id: 1,
-                phone: "15658000981",
-                name: "郑豪",
-                mid: 1,
-                applyTime: "2020-07-09 22:25:51",
-                updateTime: "2020-07-09 22:25:51",
-                statusName: "AUDITING",
-                msg: null
-              }
-            ];
+        this.tableData = data.data.list || [];
         this.page.total = data.data.total;
       }
     },
