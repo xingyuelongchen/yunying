@@ -89,7 +89,7 @@
                 show-overflow-tooltip
                 prop="name"
                 label="姓名"
-                width="100px"
+                width="90px"
               />
               <el-table-column
                 :resizable="false"
@@ -97,6 +97,7 @@
                 prop="phone"
                 label="手机号码"
                 align="center"
+                width="120px"
               />
               <el-table-column
                 :resizable="false"
@@ -104,21 +105,21 @@
                 prop="mid"
                 label="mid"
                 align="center"
-                width="90px"
+                width="100px"
               />
               <el-table-column
                 :resizable="false"
                 show-overflow-tooltip
                 prop="applyTime"
                 label="申请时间"
-                align="center"
+                align="center" 
               />
               <el-table-column
                 :resizable="false"
                 show-overflow-tooltip
                 prop="updateTime"
                 label="更新时间"
-                align="center"
+                align="center" 
               />
               <el-table-column
                 :resizable="false"
@@ -126,6 +127,14 @@
                 prop="statusName"
                 label="审核状态"
                 align="center"
+                width="100px"
+              />
+              <el-table-column
+                :resizable="false"
+                show-overflow-tooltip
+                prop="msg"
+                label="备注"
+                align="left"
               />
               <el-table-column width="100" label="操作" fixed="right" header-align="center">
                 <template slot-scope="scope">
