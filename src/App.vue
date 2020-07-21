@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="login" v-if="!userInfo.sessionId">
+    <div class="login" v-if="!ui.sessionId">
       <el-form :model="ruleForm" status-icon ref="login" label-width="60px" class="demo-ruleForm">
         <el-form-item label="账号" prop="userName" :rules="{required:true,message:'请输入账号'}">
           <el-input v-model="ruleForm.userName" autocomplete="on"></el-input>
@@ -38,13 +38,13 @@
               <i class="el-icon-s-unfold" @click="abcd = false" v-if="abcd"></i>
               <i class="el-icon-s-fold" @click="abcd = true" v-else></i>
             </div>
-            <div class="item userinfo">
-              <el-avatar :size="34" fit="cover" :src="userInfo.url " />
-              <span style="font-size:14px">{{userInfo.name || '未设置用户名'}}</span>
+            <div class="item ui">
+              <el-avatar :size="34" fit="cover" :src="ui.url " />
+              <span style="font-size:14px">{{ui.name || '未设置用户名'}}</span>
               <el-tag type="primary" size="mini" effect="dark" @click="logout" class="logout">退出</el-tag>
             </div>
           </div>
-          <template v-if="index== 1">
+          <template v-if="index == 1">
             <div class="body" v-if="!abc">
               <div class="app-search">
                 <el-form inline size="small" status-icon>
@@ -75,6 +75,7 @@
                   show-summary
                   :data="tableData"
                   :summary-method="getSummaries"
+                  :key="index"
                 >
                   <el-table-column
                     :resizable="false"
@@ -241,11 +242,14 @@
             <div class="body">
               <div class="app-search">
                 <el-form inline size="small" status-icon>
+                  <el-form-item prop="name" label="姓名">
+                    <el-input v-model="searchUser.name" />
+                  </el-form-item>
                   <el-form-item prop="phone" label="手机号">
-                    <el-input v-model.number="searchUser.phone" minlength="11" maxlength="11" />
+                    <el-input v-model="searchUser.phone" minlength="11" maxlength="11" />
                   </el-form-item>
                   <el-form-item prop="idCard" label="身份证号">
-                    <el-input v-model.number="searchUser.idCard" minlength="16" maxlength="18" />
+                    <el-input v-model="searchUser.idCard" minlength="16" maxlength="18" />
                   </el-form-item>
                   <el-form-item>
                     <el-button type="success" @click="getDataUser">搜索</el-button>
@@ -262,6 +266,7 @@
                   show-summary
                   :data="tableDataUser"
                   :summary-method="getSummaries"
+                  :key="index"
                 >
                   <el-table-column
                     :resizable="false"
@@ -311,19 +316,44 @@
                     prop="cityName"
                     label="所在城市"
                   />
+                  <el-table-column :resizable="false" label="操作" width="145" align="center">
+                    <template slot-scope="scope">
+                      <el-button
+                        type="danger"
+                        @click="()=>{dialog=true;abcdef.id=scope.row.id}"
+                      >修改手机号</el-button>
+                    </template>
+                  </el-table-column>
                 </el-table>
               </div>
               <div class="app-page">
                 <el-pagination
                   background
                   layout="prev, pager, next"
-                  :page-size="pageUser.pageSize"
-                  :total="pageUser.total"
-                  @current-change="currentPageUser"
+                  :page-size="pu.pageSize"
+                  :total="pu.total"
+                  @current-change="cpu"
                   hide-on-single-page
                 ></el-pagination>
               </div>
             </div>
+            <el-dialog title="修改手机号码" :visible.sync="dialog" width="450px">
+              <el-form :model="abcdef" inline>
+                <el-form-item
+                  label="新手机号"
+                  prop="newPhone"
+                  :rules="[
+                    {required:true,message:'请输入手机号码',trigger:'blur'}, 
+                    {pattern:/^\d{11}$/,message:'手机号码错误',trigger:'blur'}
+                    ]"
+                >
+                  <el-input v-model="abcdef.newPhone" placeholder="请输入新的手机号码" />
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="changePhone">提 交</el-button>
+                </el-form-item>
+              </el-form>
+            </el-dialog>
           </template>
         </div>
       </div>
@@ -386,7 +416,7 @@ html {
       .item {
         margin: 0 10px;
       }
-      .userinfo {
+      .ui {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -435,56 +465,56 @@ html {
       }
     }
   }
-}
-.image {
-  display: flex;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  .item {
-    width: 260px;
-    border: 1px solid #ccc;
-    margin: 5px;
-    .img {
+  .image {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    .item {
       width: 260px;
-      height: 200px;
-      overflow: hidden;
-      .el-image {
-        width: 100%;
-        height: 100%;
+      border: 1px solid #ccc;
+      margin: 5px;
+      .img {
+        width: 260px;
+        height: 200px;
+        overflow: hidden;
+        .el-image {
+          width: 100%;
+          height: 100%;
+        }
       }
-    }
 
-    .content {
-      padding: 20px 20px 10px;
-      .info {
-        > div {
+      .content {
+        padding: 20px 20px 10px;
+        .info {
+          > div {
+            margin-bottom: 10px;
+          }
+        }
+        .radio {
           margin-bottom: 10px;
         }
       }
-      .radio {
-        margin-bottom: 10px;
-      }
     }
   }
-}
-.btn {
-  text-align: center;
-  overflow: hidden;
-  margin: 20px auto;
-}
-.input {
-  border-top: 1px dashed #ccc;
-  margin-top: 20px;
-  .radio {
-    padding: 20px 10px;
+  .btn {
+    text-align: center;
+    overflow: hidden;
+    margin: 20px auto;
   }
-  .el-textarea {
-    width: 300px;
-  }
-  .text {
-    padding: 0 10px;
-    span {
-      vertical-align: top;
+  .input {
+    border-top: 1px dashed #ccc;
+    margin-top: 20px;
+    .radio {
+      padding: 20px 10px;
+    }
+    .el-textarea {
+      width: 300px;
+    }
+    .text {
+      padding: 0 10px;
+      span {
+        vertical-align: top;
+      }
     }
   }
 }
@@ -499,38 +529,40 @@ export default {
     return {
       index: "1",
       list: [],
-      onKey: true,
-      tableData: [],
-      tableDataUser: [],
+      abcdef: {},
       abc: false,
       abcd: false,
-      abcde: { pass: true, type: null },
-      userInfo: { sessionId: "" },
-      search: { status: "0", phone: null },
+      onKey: true,
+      dialog: false,
+      tableData: [],
       searchUser: {},
+      tableDataUser: [],
+      ui: { sessionId: "" },
+      abcde: { pass: true, type: null },
       page: { pageNum: 0, pageSize: 30 },
-      pageUser: { pageNum: 0, pageSize: 30 },
+      search: { status: "0", phone: null },
+      pu: { pageNum: 0, pageSize: 30 },
       ruleForm: { userName: "", password: "" }
     };
   },
   watch: {
-    userInfo() {
+    ui() {
       this.getData();
       this.getDataUser();
     }
   },
   created() {
-    let session = window.sessionStorage.getItem("userinfo");
+    let session = window.sessionStorage.getItem("ui");
     if (session) {
-      this.userInfo = JSON.parse(session);
+      this.ui = JSON.parse(session);
       this.getData();
       this.getDataUser();
     }
   },
   methods: {
     logout() {
-      window.sessionStorage.removeItem("userinfo");
-      this.userInfo = {};
+      window.sessionStorage.removeItem("ui");
+      this.ui = {};
       this.index = "1";
     },
     login(formName) {
@@ -547,9 +579,9 @@ export default {
             }
           );
           if (data.code == 200) {
-            this.userInfo = data.data;
+            this.ui = data.data;
             window.sessionStorage.setItem(
-              "userinfo",
+              "ui",
               JSON.stringify(data.data)
             );
             document.cookie = `sessionId=${data.data.sessionId}`;
@@ -638,22 +670,34 @@ export default {
       let { data } = await axios(
         "http://test.congrong-inc.com/manager/backend/manager/list",
         {
-          params: Object.assign({}, this.pageUser, this.searchUser)
+          params: Object.assign({}, this.pu, this.searchUser)
         }
       );
       if (data.code == 200) {
         this.tableDataUser = data.data.list || [];
-        this.pageUser.total = data.data.total;
+        this.pu.total = data.data.total;
       }
     },
-    currentPageUser(val) {
-      this.pageUser.pageNum = val - 1;
+    cpu(val) {
+      this.pu.pageNum = val - 1;
       this.getDataUser();
-    }
-  },
-  filters: {
-    mapType(val) {
-      return [val];
+    },
+    async changePhone() {
+      let { data } = await axios(
+        "http://test.congrong-inc.com/manager/backend/manager/changePhone",
+        {
+          method: "post",
+          params: this.abcdef
+        }
+      );
+      if (data.code == 200) {
+        this.getDataUser();
+        this.abcdef = {};
+        this.$message.success("修改成功");
+        this.dialog = false;
+      } else {
+        this.$message.error(data.data.msg);
+      }
     }
   }
 };
