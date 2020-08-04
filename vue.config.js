@@ -11,7 +11,7 @@ module.exports = {
     devServer: {
         proxy: {
             '/backend': {
-                target: 'http://test.congrong-inc.com:7001/manager/',
+                target: 'http://www.congrong-inc.com/',
                 ws: true,
                 changeOrigin: true,
             }

@@ -3,10 +3,10 @@
     <div class="login" v-if="!ui.sessionId">
       <el-form :model="ruleForm" status-icon ref="login" label-width="60px" class="demo-ruleForm">
         <el-form-item label="账号" prop="userName" :rules="{required:true,message:'请输入账号'}">
-          <el-input v-model="ruleForm.userName" autocomplete="on"></el-input>
+          <el-input clearable v-model="ruleForm.userName" autocomplete="on"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password" :rules="{required:true,message:'请输入密码'}">
-          <el-input type="password" v-model="ruleForm.password" autocomplete="on"></el-input>
+          <el-input clearable type="password" v-model="ruleForm.password" autocomplete="on"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="login('login')" style="width:100%">登陆</el-button>
@@ -30,6 +30,10 @@
               <i class="el-icon-user-solid"></i>
               <span slot="title">用户列表</span>
             </el-menu-item>
+            <el-menu-item index="3">
+              <i class="el-icon-warning"></i>
+              <span slot="title">退单处理</span>
+            </el-menu-item>
           </el-menu>
         </div>
         <div class="app-body">
@@ -49,10 +53,15 @@
               <div class="app-search">
                 <el-form inline size="small" status-icon>
                   <el-form-item prop="phone" label="手机号">
-                    <el-input v-model.number="search.phone" minlength="11" maxlength="11" />
+                    <el-input
+                      clearable
+                      v-model.number="search.phone"
+                      minlength="11"
+                      maxlength="11"
+                    />
                   </el-form-item>
                   <el-form-item prop="status" label="审核状态">
-                    <el-select v-model="search.status">
+                    <el-select clearable v-model="search.status" @change="change">
                       <el-option label="全部" value></el-option>
                       <el-option label="待补充资料" value="-1"></el-option>
                       <el-option label="待审核" value="0"></el-option>
@@ -76,6 +85,7 @@
                   :data="tableData"
                   :summary-method="getSummaries"
                   :key="index"
+                  v-loading="loading"
                 >
                   <el-table-column
                     :resizable="false"
@@ -151,6 +161,7 @@
                   layout="prev, pager, next"
                   :page-size="page.pageSize"
                   :total="page.total"
+                  :current-page="page.pageNum+1"
                   @current-change="currentPage"
                   hide-on-single-page
                 ></el-pagination>
@@ -198,6 +209,7 @@
                         </div>
                         <div class="msg">
                           <el-input
+                            clearable
                             type="textarea"
                             v-model="item.msg"
                             resize="none"
@@ -225,6 +237,7 @@
                 <div class="text" v-if="!abcde.pass">
                   <span>审核意见：</span>
                   <el-input
+                    clearable
                     type="textarea"
                     v-model="abcde.msg"
                     resize="none"
@@ -243,13 +256,13 @@
               <div class="app-search">
                 <el-form inline size="small" status-icon>
                   <el-form-item prop="name" label="姓名">
-                    <el-input v-model="searchUser.name" />
+                    <el-input clearable v-model="searchUser.name" />
                   </el-form-item>
                   <el-form-item prop="phone" label="手机号">
-                    <el-input v-model="searchUser.phone" minlength="11" maxlength="11" />
+                    <el-input clearable v-model="searchUser.phone" minlength="11" maxlength="11" />
                   </el-form-item>
                   <el-form-item prop="idCard" label="身份证号">
-                    <el-input v-model="searchUser.idCard" minlength="16" maxlength="18" />
+                    <el-input clearable v-model="searchUser.idCard" minlength="16" maxlength="18" />
                   </el-form-item>
                   <el-form-item>
                     <el-button type="success" @click="getDataUser">搜索</el-button>
@@ -263,10 +276,10 @@
                   height="100%"
                   border
                   stripe
-                  show-summary
                   :data="tableDataUser"
                   :summary-method="getSummaries"
                   :key="index"
+                  v-loading="loading"
                 >
                   <el-table-column
                     :resizable="false"
@@ -332,6 +345,7 @@
                   layout="prev, pager, next"
                   :page-size="pu.pageSize"
                   :total="pu.total"
+                  :current-page="page.pageNum+1"
                   @current-change="cpu"
                   hide-on-single-page
                 ></el-pagination>
@@ -347,7 +361,104 @@
                     {pattern:/^\d{11}$/,message:'手机号码错误',trigger:'blur'}
                     ]"
                 >
-                  <el-input v-model="abcdef.newPhone" placeholder="请输入新的手机号码" />
+                  <el-input clearable v-model="abcdef.newPhone" placeholder="请输入新的手机号码" />
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="changePhone">提 交</el-button>
+                </el-form-item>
+              </el-form>
+            </el-dialog>
+          </template>
+          <template v-if="index == 3">
+            <div class="body">
+              <div class="app-search">
+                <el-form inline size="small" status-icon>
+                  <el-form-item prop="phone" label="手机号">
+                    <el-input clearable v-model="backForm.phone" minlength="11" maxlength="11" />
+                  </el-form-item>
+                  <el-form-item prop="idCard" label="订单号">
+                    <el-input clearable v-model="backForm.order" minlength="16" maxlength="18" />
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="success" @click="backSearch">搜索</el-button>
+                    <el-button type="danger" @click="backOrder">退单</el-button>
+                  </el-form-item>
+                </el-form>
+              </div>
+              <div class="app-content">
+                <el-table
+                  tooltip-effect="dark"
+                  class="table-box"
+                  border
+                  stripe
+                  :data="backTable"
+                  :key="index"
+                  v-loading="loading"
+                >
+                  <el-table-column
+                    :resizable="false"
+                    show-overflow-tooltip
+                    prop="createDate"
+                    label="createDate"
+                    align="center"
+                  />
+                  <el-table-column
+                    :resizable="false"
+                    show-overflow-tooltip
+                    prop="loanChannel"
+                    label="loanChannel"
+                  />
+                  <el-table-column
+                    :resizable="false"
+                    show-overflow-tooltip
+                    prop="loanName"
+                    label="loanName"
+                  />
+                  <el-table-column
+                    align="center"
+                    :resizable="false"
+                    prop="managerName"
+                    label="managerName"
+                  />
+                  <el-table-column
+                    align="center"
+                    :resizable="false"
+                    prop="managerPhone"
+                    label="managerPhone"
+                  />
+                  <el-table-column
+                    align="center"
+                    :resizable="false"
+                    prop="managerAccount"
+                    label="managerAccount"
+                  />
+                  <el-table-column
+                    align="center"
+                    :resizable="false"
+                    prop="takeDate"
+                    label="takeDate"
+                  />
+                  <el-table-column
+                    align="center"
+                    :resizable="false"
+                    prop="price"
+                    label="price"
+                    :formatter="(row,col,val,index)=> val/10"
+                  />
+                </el-table>
+              </div>
+            </div>
+            <el-dialog title="修改手机号码" :visible.sync="dialog" width="450px">
+              <el-form :model="abcdef" inline>
+                <el-form-item
+                  label="新手机号"
+                  prop="newPhone"
+                  :rules="[
+                    {required:true,message:'请输入手机号码',trigger:'blur'}, 
+                    {pattern:/^\d{11}$/,message:'手机号码错误',trigger:'blur'}
+                    ]"
+                >
+                  <el-input clearable v-model="abcdef.newPhone" placeholder="请输入新的手机号码" />
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click="changePhone">提 交</el-button>
@@ -442,7 +553,6 @@ html {
     .app-content {
       padding: 0 20px;
       overflow: hidden;
-
       .table-box {
         td {
           padding: 5px;
@@ -542,7 +652,10 @@ export default {
       page: { pageNum: 0, pageSize: 30 },
       search: { status: "0", phone: null },
       pu: { pageNum: 0, pageSize: 30 },
-      ruleForm: { userName: "", password: "" }
+      ruleForm: { userName: "", password: "" },
+      backForm: {},
+      backTable: [],
+      loading: true
     };
   },
   watch: {
@@ -572,18 +685,12 @@ export default {
             ...this.ruleForm,
             password: this.md5(this.ruleForm.password)
           };
-          let { data } = await axios(
-            "http://test.congrong-inc.com/manager/backend/login",
-            {
-              params: form
-            }
-          );
+          let { data } = await axios("/backend/login", {
+            params: form
+          });
           if (data.code == 200) {
             this.ui = data.data;
-            window.sessionStorage.setItem(
-              "ui",
-              JSON.stringify(data.data)
-            );
+            window.sessionStorage.setItem("ui", JSON.stringify(data.data));
             document.cookie = `sessionId=${data.data.sessionId}`;
             this.getData();
           } else {
@@ -605,24 +712,26 @@ export default {
       return val;
     },
     async getData() {
-      let { data } = await axios(
-        "http://test.congrong-inc.com/manager/backend/audit/auditList",
-        {
-          params: Object.assign({}, this.page, this.search)
-        }
-      );
+      let form = this.page;
+      if (this.search.phone) {
+        form = this.search;
+        this.page.pageNum = 0;
+      } else {
+        form = Object.assign({}, this.page, this.search);
+      }
+      let { data } = await axios("/backend/audit/auditList", {
+        params: form
+      });
       if (data.code == 200) {
         this.tableData = data.data.list || [];
         this.page.total = data.data.total;
       }
+      this.loading = false;
     },
     async views(id) {
-      let { data } = await axios(
-        "http://test.congrong-inc.com/manager/backend/audit/detail",
-        {
-          params: { id: id }
-        }
-      );
+      let { data } = await axios("/backend/audit/detail", {
+        params: { id: id }
+      });
       if (data.code == 200) {
         this.list = data.data.imgs.map(e => {
           return {
@@ -648,13 +757,10 @@ export default {
         });
         return;
       }
-      let { data } = await axios(
-        "http://test.congrong-inc.com/manager/backend/audit/audit",
-        {
-          method: "post",
-          params: form
-        }
-      );
+      let { data } = await axios("/backend/audit/audit", {
+        method: "post",
+        params: form
+      });
       if (data.code == 200) {
         if (!this.onKey) {
           this.abc = false;
@@ -667,29 +773,38 @@ export default {
       }
     },
     async getDataUser() {
-      let { data } = await axios(
-        "http://test.congrong-inc.com/manager/backend/manager/list",
-        {
-          params: Object.assign({}, this.pu, this.searchUser)
-        }
-      );
+      this.loading = true;
+      let form = this.pu;
+      if (
+        this.searchUser.name ||
+        this.searchUser.phone ||
+        this.searchUser.idCard
+      ) {
+        form = this.searchUser;
+        this.pu.pageNum = 0;
+      }
+      let { data } = await axios("/backend/manager/list", {
+        params: form
+      });
       if (data.code == 200) {
         this.tableDataUser = data.data.list || [];
         this.pu.total = data.data.total;
       }
+      this.loading = false;
+    },
+    change() {
+      console.log(0);
+      this.page.pageNum = 0;
     },
     cpu(val) {
       this.pu.pageNum = val - 1;
       this.getDataUser();
     },
     async changePhone() {
-      let { data } = await axios(
-        "http://test.congrong-inc.com/manager/backend/manager/changePhone",
-        {
-          method: "post",
-          params: this.abcdef
-        }
-      );
+      let { data } = await axios("/backend/manager/changePhone", {
+        method: "post",
+        params: this.abcdef
+      });
       if (data.code == 200) {
         this.getDataUser();
         this.abcdef = {};
@@ -698,6 +813,45 @@ export default {
       } else {
         this.$message.error(data.data.msg);
       }
+    },
+
+    async backOrder() {
+      let { data } = await axios("/backend/refund", {
+        method: "post",
+        params: this.backForm
+      });
+      if (data.code == 200) {
+        this.backTable = [];
+        this.$message.success("退单成功");
+      } else {
+        if (data.code == -3) {
+          this.$message.error("退单失败，此单客户已经退过");
+        } else {
+          this.$message.error("操作有误，请检查号码");
+        }
+      }
+    },
+
+    async backSearch() {
+      this.loading = true;
+      let { data } = await axios(
+        "http://www.congrong-inc.com/backend/orderInfo",
+        {
+          method: "post",
+          params: this.backForm
+        }
+      );
+      if (data.code == 200) {
+        this.backTable = [data.data];
+      } else {
+        this.backTable = [];
+        if (data.code == -3) {
+          this.$message.error("查询失败，此单客户已经退单");
+        } else {
+          this.$message.error("操作有误，请检查号码");
+        }
+      }
+      this.loading = false;
     }
   }
 };
