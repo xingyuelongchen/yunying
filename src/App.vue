@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div class="login" v-if="!ui.sessionId">
+    <div class="login" v-if="!ui.sessionId ">
       <el-form :model="ruleForm" status-icon ref="login" label-width="60px" class="demo-ruleForm">
-        <el-form-item label="账号" prop="userName" :rules="{required:true,message:'请输入账号'}">
+        <el-form-item label="账号" prop="userName" :rules="{ required: true, message: '请输入账号' }">
           <el-input clearable v-model="ruleForm.userName" autocomplete="on"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password" :rules="{required:true,message:'请输入密码'}">
+        <el-form-item label="密码" prop="password" :rules="{ required: true, message: '请输入密码' }">
           <el-input clearable type="password" v-model="ruleForm.password" autocomplete="on"></el-input>
         </el-form-item>
         <el-form-item>
@@ -16,12 +16,7 @@
     <div class="wrap" v-else>
       <div class="app-html">
         <div class="app-menu">
-          <el-menu
-            default-active="1"
-            class="el-menu-vertical-demo"
-            :collapse="abcd"
-            @select="e=>index=e"
-          >
+          <el-menu default-active="1" class="el-menu-vertical-demo" :collapse="abcd" @select="e => (index = e)">
             <el-menu-item index="1">
               <i class="el-icon-s-check"></i>
               <span slot="title">身份审核</span>
@@ -34,6 +29,10 @@
               <i class="el-icon-warning"></i>
               <span slot="title">退单处理</span>
             </el-menu-item>
+            <el-menu-item index="4">
+              <i class="el-icon-s-order"></i>
+              <span slot="title">订单列表</span>
+            </el-menu-item>
           </el-menu>
         </div>
         <div class="app-body">
@@ -43,8 +42,10 @@
               <i class="el-icon-s-fold" @click="abcd = true" v-else></i>
             </div>
             <div class="item ui">
-              <el-avatar :size="34" fit="cover" :src="ui.url " />
-              <span style="font-size:14px">{{ui.name || '未设置用户名'}}</span>
+              <el-avatar :size="34" fit="cover" :src="ui.url" />
+              <span style="font-size:14px">{{
+                ui.name || "未设置用户名"
+              }}</span>
               <el-tag type="primary" size="mini" effect="dark" @click="logout" class="logout">退出</el-tag>
             </div>
           </div>
@@ -52,22 +53,21 @@
             <div class="body" v-if="!abc">
               <div class="app-search">
                 <el-form inline size="small" status-icon>
-                  <el-form-item prop="phone" label="手机号">
-                    <el-input
-                      clearable
-                      v-model.number="search.phone"
-                      minlength="11"
-                      maxlength="11"
-                    />
+                  <el-form-item prop="phone" label="手机号码">
+                    <el-input clearable v-model.number="search.phone" minlength="11" maxlength="11" />
                   </el-form-item>
                   <el-form-item prop="status" label="审核状态">
                     <el-select clearable v-model="search.status" @change="change">
                       <el-option label="全部" value></el-option>
+                      <el-option label="已冻结" value="-9"></el-option>
                       <el-option label="待补充资料" value="-1"></el-option>
                       <el-option label="待审核" value="0"></el-option>
                       <el-option label="已认证" value="1"></el-option>
                       <el-option label="认证失败" value="2"></el-option>
                     </el-select>
+                  </el-form-item>
+                  <el-form-item prop="company" label="公司名称">
+                    <el-input clearable v-model.number="search.company" minlength="11" maxlength="11" />
                   </el-form-item>
                   <el-form-item>
                     <el-button type="success" @click="getData">搜索</el-button>
@@ -75,79 +75,17 @@
                 </el-form>
               </div>
               <div class="app-content">
-                <el-table
-                  tooltip-effect="dark"
-                  class="table-box"
-                  height="100%"
-                  border
-                  stripe
-                  show-summary
-                  :data="tableData"
-                  :summary-method="getSummaries"
-                  :key="index"
-                  v-loading="loading"
-                >
-                  <el-table-column
-                    :resizable="false"
-                    show-overflow-tooltip
-                    prop="id"
-                    label="ID"
-                    width="60px"
-                    align="center"
-                  />
-                  <el-table-column
-                    align="center"
-                    :resizable="false"
-                    show-overflow-tooltip
-                    prop="name"
-                    label="姓名"
-                    width="150px"
-                  />
-                  <el-table-column
-                    :resizable="false"
-                    show-overflow-tooltip
-                    prop="phone"
-                    label="手机号码"
-                    align="center"
-                    width="150px"
-                  />
-                  <el-table-column
-                    :resizable="false"
-                    show-overflow-tooltip
-                    prop="mid"
-                    label="mid"
-                    align="center"
-                    width="100px"
-                  />
-                  <el-table-column
-                    :resizable="false"
-                    show-overflow-tooltip
-                    prop="applyTime"
-                    label="申请时间"
-                    align="center"
-                  />
-                  <el-table-column
-                    :resizable="false"
-                    show-overflow-tooltip
-                    prop="updateTime"
-                    label="更新时间"
-                    align="center"
-                  />
-                  <el-table-column
-                    :resizable="false"
-                    show-overflow-tooltip
-                    prop="statusName"
-                    label="审核状态"
-                    align="center"
-                    width="150px"
-                  />
-                  <el-table-column
-                    :resizable="false"
-                    show-overflow-tooltip
-                    prop="msg"
-                    label="备注"
-                    align="left"
-                  />
+                <el-table tooltip-effect="dark" class="table-box" height="100%" border stripe show-summary :data="tableData" :summary-method="getSummaries" :key="index" v-loading="loading">
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="id" label="ID" width="100px" align="center" />
+                  <el-table-column align="center" :resizable="false" show-overflow-tooltip prop="name" label="姓名" width="90px" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="phone" label="手机号" align="center" width="150px" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="mid" label="经理ID" align="center" width="100px" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="applyTime" label="申请时间" align="center" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="updateTime" label="更新时间" align="center" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="statusName" label="审核状态" align="center" width="150px" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="freezed" label="账号状态" align="center" width="100px" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="companyName" label="公司名称" align="center" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="msg" label="备注" align="center" />
                   <el-table-column width="100" label="操作" fixed="right" header-align="center">
                     <template slot-scope="scope">
                       <el-button size="mini" type="danger" @click="views(scope.row.id)">审核</el-button>
@@ -156,50 +94,47 @@
                 </el-table>
               </div>
               <div class="app-page">
-                <el-pagination
-                  background
-                  layout="prev, pager, next"
-                  :page-size="page.pageSize"
-                  :total="page.total"
-                  :current-page="page.pageNum+1"
-                  @current-change="currentPage"
-                  hide-on-single-page
-                ></el-pagination>
+                <el-pagination background layout="prev, pager, next" :page-size="page.pageSize" :total="page.total" :current-page="page.pageNum + 1" @current-change="currentPage" hide-on-single-page></el-pagination>
               </div>
             </div>
             <div v-else style="overflow:auto;padding:20px ">
               <div style="padding:10px 10px">
                 <span>逐张审核：</span>
                 <el-switch v-model="onKey" />
-                <el-button
-                  style="margin-left:20px"
-                  @click="abc = false"
-                  size="mini"
-                  type="danger"
-                >取消</el-button>
+                <el-button style="margin-left:20px" @click="abc = false" size="mini" type="danger">取消</el-button>
               </div>
               <div class="image">
-                <template v-for="(item,index) in list">
+                <template v-for="(item, index) in list">
                   <div class="item" :key="index">
                     <div class="img">
                       <el-image :src="item.url" fit="cover" :preview-src-list="[item.url]" />
                     </div>
                     <div class="content">
                       <div class="info">
-                        <div>审核状态：{{item.status || '暂无状态'}}</div>
                         <div>
-                          图片类型：{{ {
-                          person: "身份证人像面",
-                          country: "身份证国徽面",
-                          hand: "手持身份证",
-                          company: "公司照片",
-                          business: "机构营业执照",
-                          contract: "劳动合同",
-                          work: "工牌或名片"
-                          }[item.type] }}
+                          拒绝原因：<span style="color:red">{{
+                            item.msg || "暂无"
+                          }}</span>
                         </div>
-                        <div>所在城市：{{item.cityName}}</div>
-                        <div>ID：{{item.id}}</div>
+                        <div>ID：{{ item.id }}</div>
+                        <!-- <div>审核状态：{{item.status || '暂无状态'}}</div> -->
+                        <div>姓名：{{ item.name || "暂无" }}</div>
+                        <div>证件号：{{ item.idCard || "暂无" }}</div>
+                        <div>公司名称：{{ item.companyName || "暂无" }}</div>
+                        <div>所在城市：{{ item.cityName }}</div>
+                        <div>
+                          图片类型：{{
+                            {
+                              person: "身份证人像面",
+                              country: "身份证国徽面",
+                              hand: "手持身份证",
+                              company: "公司照片",
+                              business: "机构营业执照",
+                              contract: "劳动合同",
+                              work: "工牌或名片"
+                            }[item.type]
+                          }}
+                        </div>
                       </div>
                       <template v-if="onKey">
                         <div class="radio">
@@ -208,21 +143,12 @@
                           <el-radio v-model="item.pass" type="danger" :label="false">拒绝</el-radio>
                         </div>
                         <div class="msg">
-                          <el-input
-                            clearable
-                            type="textarea"
-                            v-model="item.msg"
-                            resize="none"
-                            v-if="!item.pass"
-                            placeholder="请输入审核意见"
-                            :rules="{required:true,message:'请输入审核意见'}"
-                          />
+                          <el-input clearable type="textarea" v-model="item.msg" resize="none" v-if="!item.pass" placeholder="请输入审核意见" :rules="{
+                              required: true,
+                              message: '请输入审核意见'
+                            }" />
                         </div>
-                        <el-button
-                          @click="onSubmit(item)"
-                          type="primary"
-                          style="width:100%;margin:10px auto"
-                        >提交</el-button>
+                        <el-button @click="onSubmit(item)" type="primary" style="width:100%;margin:10px auto">提交</el-button>
                       </template>
                     </div>
                   </div>
@@ -236,13 +162,7 @@
                 </div>
                 <div class="text" v-if="!abcde.pass">
                   <span>审核意见：</span>
-                  <el-input
-                    clearable
-                    type="textarea"
-                    v-model="abcde.msg"
-                    resize="none"
-                    placeholder="请输入审核意见"
-                  />
+                  <el-input clearable type="textarea" v-model="abcde.msg" resize="none" placeholder="请输入审核意见" />
                 </div>
               </div>
               <div class="btn">
@@ -270,97 +190,47 @@
                 </el-form>
               </div>
               <div class="app-content">
-                <el-table
-                  tooltip-effect="dark"
-                  class="table-box"
-                  height="100%"
-                  border
-                  stripe
-                  :data="tableDataUser"
-                  :summary-method="getSummaries"
-                  :key="index"
-                  v-loading="loading"
-                >
-                  <el-table-column
-                    :resizable="false"
-                    show-overflow-tooltip
-                    prop="id"
-                    label="ID"
-                    width="100px"
-                    align="center"
-                  />
-                  <el-table-column
-                    :resizable="false"
-                    show-overflow-tooltip
-                    prop="name"
-                    label="姓名"
-                    width="90px"
-                  />
-                  <el-table-column
-                    align="center"
-                    :resizable="false"
-                    show-overflow-tooltip
-                    prop="idCard"
-                    label="身份证号码"
-                  />
-                  <el-table-column
-                    align="center"
-                    :resizable="false"
-                    show-overflow-tooltip
-                    prop="phone"
-                    label="手机号"
-                  />
-                  <el-table-column
-                    align="center"
-                    :resizable="false"
-                    show-overflow-tooltip
-                    prop="statusName"
-                    label="状态"
-                  />
-                  <el-table-column
-                    :resizable="false"
-                    show-overflow-tooltip
-                    prop="account"
-                    label="account"
-                  />
-                  <el-table-column
-                    :resizable="false"
-                    show-overflow-tooltip
-                    prop="cityName"
-                    label="所在城市"
-                  />
-                  <el-table-column :resizable="false" label="操作" width="145" align="center">
+                <el-table tooltip-effect="dark" class="table-box" height="100%" border stripe :data="tableDataUser" :summary-method="getSummaries" :key="index" v-loading="loading">
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="id" label="ID" width="100px" align="center" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="name" label="姓名" width="90px" align="center" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="idCard" label="身份证号码" align="center" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="phone" label="手机号" align="center" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="statusName" label="账号状态" align="center" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="account" label="余额" align="center" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="cityName" label="所在城市" align="center" />
+                  <el-table-column :resizable="false" label="操作" width="450" align="center">
                     <template slot-scope="scope">
-                      <el-button
-                        type="danger"
-                        @click="()=>{dialog=true;abcdef.id=scope.row.id}"
-                      >修改手机号</el-button>
+                      <el-button type="danger" @click="
+                          () => {
+                            dialog = true;
+                            abcdef.id = scope.row.id;
+                          }
+                        ">修改号码</el-button>
+                      <el-button type="danger" @click="initCert(scope.row.id)">重置认证</el-button>
+                      <el-button type="danger" @click="freeze(scope.row.id)">冻结</el-button>
+                      <el-button type="danger" @click="thaw(scope.row.id)">解冻</el-button>
                     </template>
                   </el-table-column>
                 </el-table>
               </div>
               <div class="app-page">
-                <el-pagination
-                  background
-                  layout="prev, pager, next"
-                  :page-size="pu.pageSize"
-                  :total="pu.total"
-                  :current-page="page.pageNum+1"
-                  @current-change="cpu"
-                  hide-on-single-page
-                ></el-pagination>
+                <el-pagination background layout="prev, pager, next" :page-size="pu.pageSize" :total="pu.total" :current-page="page.pageNum + 1" @current-change="cpu" hide-on-single-page></el-pagination>
               </div>
             </div>
             <el-dialog title="修改手机号码" :visible.sync="dialog" width="450px">
               <el-form :model="abcdef" inline>
-                <el-form-item
-                  label="新手机号"
-                  prop="newPhone"
-                  :rules="[
-                    {required:true,message:'请输入手机号码',trigger:'blur'}, 
-                    {pattern:/^\d{11}$/,message:'手机号码错误',trigger:'blur'}
-                    ]"
-                >
+                <el-form-item label="新手机号" prop="newPhone" :rules="[
+                    {
+                      required: true,
+                      message: '请输入手机号码',
+                      trigger: 'blur'
+                    },
+                    {
+                      pattern: /^\d{11}$/,
+                      message: '手机号码错误',
+                      trigger: 'blur'
+                    }
+                  ]">
                   <el-input clearable v-model="abcdef.newPhone" placeholder="请输入新的手机号码" />
                 </el-form-item>
                 <el-form-item>
@@ -373,12 +243,12 @@
             <div class="body">
               <div class="app-search">
                 <el-form inline size="small" status-icon>
-                  <el-form-item prop="phone" label="手机号">
-                    <el-input clearable v-model="backForm.phone" minlength="11" maxlength="11" />
+                  <el-form-item prop="phone" label="手机号/订单号">
+                    <el-input clearable v-model="backForm.phone" minlength="11" />
                   </el-form-item>
-                  <el-form-item prop="idCard" label="订单号">
+                  <!-- <el-form-item prop="idCard" label="订单号">
                     <el-input clearable v-model="backForm.order" minlength="16" maxlength="18" />
-                  </el-form-item>
+                  </el-form-item> -->
                   <el-form-item>
                     <el-button type="success" @click="backSearch">搜索</el-button>
                     <el-button type="danger" @click="backOrder">退单</el-button>
@@ -386,78 +256,36 @@
                 </el-form>
               </div>
               <div class="app-content">
-                <el-table
-                  tooltip-effect="dark"
-                  class="table-box"
-                  border
-                  stripe
-                  :data="backTable"
-                  :key="index"
-                  v-loading="loading"
-                >
-                  <el-table-column
-                    :resizable="false"
-                    show-overflow-tooltip
-                    prop="createDate"
-                    label="createDate"
-                    align="center"
-                  />
-                  <el-table-column
-                    :resizable="false"
-                    show-overflow-tooltip
-                    prop="loanChannel"
-                    label="loanChannel"
-                  />
-                  <el-table-column
-                    :resizable="false"
-                    show-overflow-tooltip
-                    prop="loanName"
-                    label="loanName"
-                  />
-                  <el-table-column
-                    align="center"
-                    :resizable="false"
-                    prop="managerName"
-                    label="managerName"
-                  />
-                  <el-table-column
-                    align="center"
-                    :resizable="false"
-                    prop="managerPhone"
-                    label="managerPhone"
-                  />
-                  <el-table-column
-                    align="center"
-                    :resizable="false"
-                    prop="managerAccount"
-                    label="managerAccount"
-                  />
-                  <el-table-column
-                    align="center"
-                    :resizable="false"
-                    prop="takeDate"
-                    label="takeDate"
-                  />
-                  <el-table-column
-                    align="center"
-                    :resizable="false"
-                    prop="price"
-                    label="price"
-                    :formatter="(row,col,val,index)=> val/10"
-                  />
+                <el-table tooltip-effect="dark" class="table-box" border stripe :data="backTable" :key="index" v-loading="loading">
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="createDate" label="申请时间" align="center" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="loanChannel" label="来源渠道" align="center" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="loanName" label="用户姓名" align="center" />
+                  <el-table-column :resizable="false" prop="managerName" label="经理姓名" align="center" />
+                  <el-table-column :resizable="false" prop="managerPhone" label="经理手机号" align="center" />
+                  <el-table-column :resizable="false" prop="managerAccount" :formatter="
+                      (row, col, val, index) => {
+                        return val / 100;
+                      }
+                    " label="账户余额" align="center" />
+                  <el-table-column :resizable="false" prop="takeDate" label="抢单时间" align="center" />
+                  <el-table-column :resizable="false" prop="price" label="订单价格" align="center" />
                 </el-table>
               </div>
             </div>
             <el-dialog title="修改手机号码" :visible.sync="dialog" width="450px">
               <el-form :model="abcdef" inline>
-                <el-form-item
-                  label="新手机号"
-                  prop="newPhone"
-                  :rules="[
-                    {required:true,message:'请输入手机号码',trigger:'blur'}, 
-                    {pattern:/^\d{11}$/,message:'手机号码错误',trigger:'blur'}
-                    ]"
-                >
+                <el-form-item label="新手机号" prop="newPhone" :rules="[
+                    {
+                      required: true,
+                      message: '请输入手机号码',
+                      trigger: 'blur'
+                    },
+                    {
+                      pattern: /^\d{11}$/,
+                      message: '手机号码错误',
+                      trigger: 'blur'
+                    }
+                  ]">
                   <el-input clearable v-model="abcdef.newPhone" placeholder="请输入新的手机号码" />
                 </el-form-item>
                 <el-form-item>
@@ -465,6 +293,9 @@
                 </el-form-item>
               </el-form>
             </el-dialog>
+          </template>
+          <template v-if="index == 4">
+            <orderList />
           </template>
         </div>
       </div>
@@ -542,8 +373,12 @@ html {
       }
     }
     .body {
-      display: grid;
-      grid-template-rows: 60px auto 60px;
+      // display: grid;
+      // grid-template-rows: 60px auto 60px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: stretch;
+      flex-direction: column;
       overflow: hidden;
       &.active {
         grid-template-rows: 60px auto;
@@ -553,6 +388,7 @@ html {
     .app-content {
       padding: 0 20px;
       overflow: hidden;
+      flex: 1 1 auto;
       .table-box {
         td {
           padding: 5px;
@@ -564,12 +400,16 @@ html {
       align-items: center;
       padding-top: 15px;
       padding-left: 20px;
+      min-height: 60px;
+      height: auto;
+      max-height: 120px;
     }
     .app-page {
       display: flex;
       justify-content: flex-start;
       align-items: center;
       padding-left: 15px;
+      height: 65px;
       .el-pagination {
         padding: 0;
       }
@@ -635,6 +475,7 @@ import axios from "axios";
 axios.defaults.withCredentials = true;
 export default {
   name: "home",
+  components: { orderList: () => import("./orderlist.vue") },
   data() {
     return {
       index: "1",
@@ -650,7 +491,7 @@ export default {
       ui: { sessionId: "" },
       abcde: { pass: true, type: null },
       page: { pageNum: 0, pageSize: 30 },
-      search: { status: "0", phone: null },
+      search: { status: "0", phone: null, company: null },
       pu: { pageNum: 0, pageSize: 30 },
       ruleForm: { userName: "", password: "" },
       backForm: {},
@@ -811,7 +652,51 @@ export default {
         this.$message.success("修改成功");
         this.dialog = false;
       } else {
-        this.$message.error(data.data.msg);
+        this.$message.error(data.msg);
+      }
+    },
+
+    async freeze(id) {
+      let { data } = await axios("/backend/manager/freeze", {
+        method: "post",
+        params: { id: id }
+      });
+      if (data.code == 200) {
+        this.$message.success("冻结成功");
+        this.getDataUser();
+      } else {
+        this.$message.error("已经冻结，请勿重复操作");
+      }
+    },
+
+    async thaw(id) {
+      let { data } = await axios("/backend/manager/thaw", {
+        method: "post",
+        params: { id: id }
+      });
+      if (data.code == 200) {
+        this.$message.success("解冻成功");
+        this.getDataUser();
+      } else {
+        this.$message.error("已经解冻，请勿重复操作");
+      }
+    },
+
+    async initCert(id) {
+      let { data } = await axios("/backend/manager/initCert", {
+        method: "post",
+        params: { id: id }
+      });
+      if (data.code == 200) {
+        this.$message.success("重置成功");
+        this.getDataUser();
+      } else {
+        if (data.code == -8) {
+          this.$message.error("账号已冻结，状态不可更改");
+          this.getDataUser();
+        } else {
+          this.$message.error("已经重置，请勿重复操作");
+        }
       }
     },
 
@@ -823,36 +708,39 @@ export default {
       if (data.code == 200) {
         this.backTable = [];
         this.$message.success("退单成功");
+        // this.backSearch();
       } else {
         if (data.code == -3) {
-          this.$message.error("退单失败，此单客户已经退过");
+          this.$message.error(
+            "校验失败，订单不存在 | 已退过 | 超时 | 有订单没流水！"
+          );
+          // this.backSearch();
         } else {
-          this.$message.error("操作有误，请检查号码");
+          this.$message.error(data.msg);
         }
       }
     },
 
     async backSearch() {
       this.loading = true;
-      let { data } = await axios(
-        "http://www.congrong-inc.com/backend/orderInfo",
-        {
-          method: "post",
-          params: this.backForm
-        }
-      );
+      // let { data } = await axios("http://www.congrong-inc.com/backend/orderInfo",{
+      let { data } = await axios("/backend/orderInfo", {
+        method: "post",
+        params: this.backForm
+      });
       if (data.code == 200) {
         this.backTable = [data.data];
       } else {
         this.backTable = [];
         if (data.code == -3) {
-          this.$message.error("查询失败，此单客户已经退单");
+          this.$message.error("查询失败");
         } else {
-          this.$message.error("操作有误，请检查号码");
+          this.$message.error(data.msg);
         }
       }
       this.loading = false;
     }
   }
 };
-</script> 
+</script>
+
