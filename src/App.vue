@@ -16,6 +16,7 @@
     <div class="wrap" v-else>
       <div class="app-html">
         <div class="app-menu">
+          <div style="color: #fff;background-color: #409eff;height: 40px;margin: 0 auto;text-align: center;padding-top: 20px;">运营后台</div>
           <el-menu default-active="1" class="el-menu-vertical-demo" :collapse="abcd" @select="e => (index = e)">
             <el-menu-item index="1">
               <i class="el-icon-s-check"></i>
@@ -75,7 +76,7 @@
                 </el-form>
               </div>
               <div class="app-content">
-                <el-table tooltip-effect="dark" class="table-box" height="100%" border stripe show-summary :data="tableData" :summary-method="getSummaries" :key="index" v-loading="loading">
+                <el-table tooltip-effect="dark" class="table-box" border stripe show-summary :data="tableData" :summary-method="getSummaries" :key="index" v-loading="loading">
                   <el-table-column :resizable="false" show-overflow-tooltip prop="id" label="ID" width="100px" align="center" />
                   <el-table-column align="center" :resizable="false" show-overflow-tooltip prop="name" label="姓名" width="90px" />
                   <el-table-column :resizable="false" show-overflow-tooltip prop="phone" label="手机号" align="center" width="150px" />
@@ -190,7 +191,7 @@
                 </el-form>
               </div>
               <div class="app-content">
-                <el-table tooltip-effect="dark" class="table-box" height="100%" border stripe :data="tableDataUser" :summary-method="getSummaries" :key="index" v-loading="loading">
+                <el-table tooltip-effect="dark" class="table-box" border stripe :data="tableDataUser" :summary-method="getSummaries" :key="index" v-loading="loading">
                   <el-table-column :resizable="false" show-overflow-tooltip prop="id" label="ID" width="100px" align="center" />
                   <el-table-column :resizable="false" show-overflow-tooltip prop="name" label="姓名" width="90px" align="center" />
                   <el-table-column :resizable="false" show-overflow-tooltip prop="idCard" label="身份证号码" align="center" />
@@ -375,14 +376,15 @@ html {
     .body {
       // display: grid;
       // grid-template-rows: 60px auto 60px;
-      display: flex;
-      justify-content: flex-start;
-      align-items: stretch;
-      flex-direction: column;
-      overflow: hidden;
+      // display: flex;
+      // align-items: stretch;
+      // flex-direction: column;
+      // overflow: hidden;
       &.active {
-        grid-template-rows: 60px auto;
         overflow: hidden;
+      }
+      .el-table {
+        max-height: 550px;
       }
     }
     .app-content {

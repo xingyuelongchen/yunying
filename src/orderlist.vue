@@ -48,7 +48,7 @@ Create Time  : 2020-09-20
           <el-input clearable v-model="search.managerPhone" minlength="11" maxlength="11" />
         </el-form-item>
         <el-form-item prop="orderNo" label="订单号">
-          <el-input clearable v-model="search.orderNo" minlength="16" maxlength="18" />
+          <el-input clearable v-model="search.orderNo" />
         </el-form-item>
         <el-form-item prop="time" label="日期范围">
           <el-date-picker v-model="dateTime" type="datetimerange" @change="setdate" :picker-options="pickerOptions" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
@@ -60,7 +60,7 @@ Create Time  : 2020-09-20
       </el-form>
     </div>
     <div class="app-content">
-      <el-table tooltip-effect="dark" class="table-box" height="100%" border stripe :data="tableData" v-loading="loading">
+      <el-table tooltip-effect="dark" class="table-box" border stripe :data="tableData" v-loading="loading">
         <el-table-column :resizable="false" show-overflow-tooltip width="100px" prop="id" label="ID" align="center" />
         <el-table-column :resizable="false" show-overflow-tooltip width="100px" prop="name" label="姓名" align="center" />
         <el-table-column :resizable="false" show-overflow-tooltip width="250px" prop="order_no" label="订单号" align="center" />
@@ -138,20 +138,6 @@ export default {
   },
   mounted() {
     this.getData();
-    this.orderDetailFields = Object.keys(this.orderDetail).map(e => {
-      return {
-        name: e,
-        prop: e
-      };
-    });
-    this.orderDetailFieldsInfo = Object.keys(
-      JSON.parse(this.orderDetail.info)
-    ).map(e => {
-      return {
-        name: e,
-        prop: e
-      };
-    });
   },
   methods: {
     setdate() {
@@ -175,6 +161,16 @@ export default {
             prop: e
           };
         });
+        if (data.data.info) {
+          let info = JSON.parse(data.data.info);
+          this.orderDetail.info = info;
+          this.orderDetailFieldsInfo = Object.keys(info).map(e => {
+            return {
+              name: e,
+              prop: e
+            };
+          });
+        }
       }
       this.show = true;
     },
@@ -189,7 +185,6 @@ export default {
       } else if (
         this.search.name ||
         this.search.loadPhone ||
-        this.search.managerPhone ||
         this.search.orderNo
       ) {
         form = this.search;
@@ -215,19 +210,6 @@ export default {
 };
 </script>
 <style lang="less">
-.body {
-  // display: grid;
-  // grid-template-rows: 60px auto 60px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: stretch;
-  flex-direction: column;
-  overflow: hidden;
-  &.active {
-    grid-template-rows: 60px auto;
-    overflow: hidden;
-  }
-}
 .app-content {
   padding: 0 20px;
   overflow: hidden;
@@ -268,6 +250,7 @@ export default {
 .demo-table-expand label {
   width: 120px;
   color: #99a9bf;
+  overflow: hidden;
 }
 .demo-table-expand .el-form-item {
   margin-right: 0;
