@@ -14,6 +14,11 @@ module.exports = {
                 target: 'http://test.congrong-inc.com/',
                 ws: true,
                 changeOrigin: true,
+            },
+            '/jud': {
+                target: 'http://test.congrong-inc.com/',
+                ws: true,
+                changeOrigin: true,
             }
         },
     }

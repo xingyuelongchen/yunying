@@ -34,6 +34,10 @@
               <i class="el-icon-s-order"></i>
               <span slot="title">订单列表</span>
             </el-menu-item>
+            <el-menu-item index="5">
+              <i class="el-icon-s-order"></i>
+              <span slot="title">报表统计</span>
+            </el-menu-item>
           </el-menu>
         </div>
         <div class="app-body">
@@ -76,7 +80,7 @@
                 </el-form>
               </div>
               <div class="app-content">
-                <el-table tooltip-effect="dark" class="table-box" border stripe show-summary :data="tableData" :summary-method="getSummaries" :key="index" v-loading="loading">
+                <el-table tooltip-effect="dark" class="table-box" height="100%" border stripe show-summary :data="tableData" :summary-method="getSummaries" :key="index" v-loading="loading">
                   <el-table-column :resizable="false" show-overflow-tooltip prop="id" label="ID" width="100px" align="center" />
                   <el-table-column align="center" :resizable="false" show-overflow-tooltip prop="name" label="姓名" width="90px" />
                   <el-table-column :resizable="false" show-overflow-tooltip prop="phone" label="手机号" align="center" width="150px" />
@@ -144,7 +148,7 @@
                           <el-radio v-model="item.pass" type="danger" :label="false">拒绝</el-radio>
                         </div>
                         <div class="msg">
-                          <el-input clearable type="textarea" v-model="item.msg" resize="none" v-if="!item.pass" placeholder="请输入审核意见" :rules="{
+                          <el-input clearable type="textarea" v-model="item.msg" resize="none" placeholder="请输入审核意见" :rules="{
                               required: true,
                               message: '请输入审核意见'
                             }" />
@@ -161,14 +165,14 @@
                   <el-radio v-model="abcde.pass" :label="true">通过</el-radio>
                   <el-radio v-model="abcde.pass" :label="false">拒绝</el-radio>
                 </div>
-                <div class="text" v-if="!abcde.pass">
+                <div class="text">
                   <span>审核意见：</span>
                   <el-input clearable type="textarea" v-model="abcde.msg" resize="none" placeholder="请输入审核意见" />
                 </div>
               </div>
               <div class="btn">
                 <el-button type="danger" @click="abc = false">取消</el-button>
-                <el-button v-if="!onKey" type="success" @click="onSubmit(abcde)">提交</el-button>
+                <el-button v-if="!onKey" type="success" @click="onSubmit(abcde)">一键提交</el-button>
               </div>
             </div>
           </template>
@@ -185,28 +189,42 @@
                   <el-form-item prop="idCard" label="身份证号">
                     <el-input clearable v-model="searchUser.idCard" minlength="16" maxlength="18" />
                   </el-form-item>
+                  <el-form-item prop="channel" label="来源渠道">
+                    <el-input clearable v-model="searchUser.channel" />
+                  </el-form-item>
+                  <el-form-item prop="company" label="公司名称">
+                    <el-input clearable v-model="searchUser.company" />
+                  </el-form-item>
+                  <el-form-item prop="cityName" label="认证城市">
+                    <el-input clearable v-model="searchUser.cityName" />
+                  </el-form-item>
+                  <el-form-item prop="time" label="日期范围">
+                    <el-date-picker v-model="dateTime" type="datetimerange" @change="setdate" :picker-options="pickerOptions" value-format="yyyy-MM-dd HH:mm:ss" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+                    </el-date-picker>
+                  </el-form-item>
                   <el-form-item>
                     <el-button type="success" @click="getDataUser">搜索</el-button>
                   </el-form-item>
                 </el-form>
               </div>
               <div class="app-content">
-                <el-table tooltip-effect="dark" class="table-box" border stripe :data="tableDataUser" :summary-method="getSummaries" :key="index" v-loading="loading">
-                  <el-table-column :resizable="false" show-overflow-tooltip prop="id" label="ID" width="100px" align="center" />
+                <el-table tooltip-effect="dark" class="table-box" height="100%" border stripe :data="tableDataUser" :summary-method="getSummaries" :key="index" v-loading="loading">
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="id" label="ID" width="80px" align="center" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="channel" label="来源" width="80px" align="center" />
                   <el-table-column :resizable="false" show-overflow-tooltip prop="name" label="姓名" width="90px" align="center" />
                   <el-table-column :resizable="false" show-overflow-tooltip prop="idCard" label="身份证号码" align="center" />
-                  <el-table-column :resizable="false" show-overflow-tooltip prop="phone" label="手机号" align="center" />
-                  <el-table-column :resizable="false" show-overflow-tooltip prop="statusName" label="账号状态" align="center" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="phone" width="130px" label="手机号" align="center" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="statusName" width="120px" label="账号状态" align="center" />
                   <el-table-column :resizable="false" show-overflow-tooltip prop="account" label="余额" align="center" />
-                  <el-table-column :resizable="false" show-overflow-tooltip prop="cityName" label="所在城市" align="center" />
-                  <el-table-column :resizable="false" label="操作" width="450" align="center">
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="cityName" label="认证城市" align="center" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="company" width="150px" label="公司名称" align="center" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="createDate" width="180px" label="注册时间" align="center" />
+                  <el-table-column :resizable="false" show-overflow-tooltip prop="memo" width="180px" label="备注" align="center" />
+                  <el-table-column :resizable="false" label="操作" width="500" align="center">
                     <template slot-scope="scope">
-                      <el-button type="danger" @click="
-                          () => {
-                            dialog = true;
-                            abcdef.id = scope.row.id;
-                          }
-                        ">修改号码</el-button>
+                      <el-button type="danger" @click="() => {memoDialog = true;memo.id = scope.row.id;}">备注</el-button>
+                      <!-- <el-button type="danger" @click="viewMemo(scope.row.id)">查看备注</el-button> -->
+                      <el-button type="danger" @click="() => {dialog = true;abcdef.id = scope.row.id;}">修改号码</el-button>
                       <el-button type="danger" @click="initCert(scope.row.id)">重置认证</el-button>
                       <el-button type="danger" @click="freeze(scope.row.id)">冻结</el-button>
                       <el-button type="danger" @click="thaw(scope.row.id)">解冻</el-button>
@@ -218,7 +236,7 @@
                 <el-pagination background layout="prev, pager, next" :page-size="pu.pageSize" :total="pu.total" :current-page="page.pageNum + 1" @current-change="cpu" hide-on-single-page></el-pagination>
               </div>
             </div>
-            <el-dialog title="修改手机号码" :visible.sync="dialog" width="450px">
+            <el-dialog title="修改手机号码" :visible.sync="dialog" width="550px">
               <el-form :model="abcdef" inline>
                 <el-form-item label="新手机号" prop="newPhone" :rules="[
                     {
@@ -237,6 +255,22 @@
                 <el-form-item>
                   <el-button type="primary" @click="changePhone">提 交</el-button>
                 </el-form-item>
+              </el-form>
+            </el-dialog>
+            <el-dialog title="添加备注" :visible.sync="memoDialog" width="450px">
+              <el-form :model="memo" inline>
+                <el-form-item label="备注内容" prop="memo" :rules="[
+                    {
+                      required: true,
+                      message: '请输入内容',
+                      trigger: 'blur'
+                    }
+                  ]">
+                  <el-input clearable v-model="memo.memo" type="textarea" maxlength="50" show-word-limit width="300px" height="300px" placeholder="请输入内容" />
+                </el-form-item>
+                <div style="text-align:center">
+                  <el-button type="primary" @click="memoSure">确 认</el-button>
+                </div>
               </el-form>
             </el-dialog>
           </template>
@@ -295,9 +329,8 @@
               </el-form>
             </el-dialog>
           </template>
-          <template v-if="index == 4">
-            <orderList />
-          </template>
+          <orderList v-if="index == 4" />
+          <stats v-if="index == 5" />
         </div>
       </div>
     </div>
@@ -376,15 +409,14 @@ html {
     .body {
       // display: grid;
       // grid-template-rows: 60px auto 60px;
-      // display: flex;
-      // align-items: stretch;
-      // flex-direction: column;
-      // overflow: hidden;
+      display: flex;
+      justify-content: flex-start;
+      align-items: stretch;
+      flex-direction: column;
+      overflow: hidden;
       &.active {
+        grid-template-rows: 60px auto;
         overflow: hidden;
-      }
-      .el-table {
-        max-height: 550px;
       }
     }
     .app-content {
@@ -404,7 +436,6 @@ html {
       padding-left: 20px;
       min-height: 60px;
       height: auto;
-      max-height: 120px;
     }
     .app-page {
       display: flex;
@@ -473,32 +504,69 @@ html {
 </style>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 axios.defaults.withCredentials = true;
 export default {
-  name: "home",
-  components: { orderList: () => import("./orderlist.vue") },
+  name: 'home',
+  components: {
+    orderList: () => import('./orderlist.vue'),
+    stats: () => import('./stats.vue')
+  },
   data() {
     return {
-      index: "1",
+      index: '1',
+      dateTime: [],
       list: [],
       abcdef: {},
+      memo: {},
       abc: false,
       abcd: false,
       onKey: true,
       dialog: false,
+      memoDialog: false,
       tableData: [],
       searchUser: {},
       tableDataUser: [],
-      ui: { sessionId: "" },
+      ui: { sessionId: '' },
       abcde: { pass: true, type: null },
       page: { pageNum: 0, pageSize: 30 },
-      search: { status: "0", phone: null, company: null },
+      search: { status: '0', phone: null, company: null },
       pu: { pageNum: 0, pageSize: 30 },
-      ruleForm: { userName: "", password: "" },
+      ruleForm: { userName: '', password: '' },
       backForm: {},
       backTable: [],
-      loading: true
+      loading: true,
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', [start, end]);
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          }
+        ]
+      }
     };
   },
   watch: {
@@ -508,7 +576,7 @@ export default {
     }
   },
   created() {
-    let session = window.sessionStorage.getItem("ui");
+    let session = window.sessionStorage.getItem('ui');
     if (session) {
       this.ui = JSON.parse(session);
       this.getData();
@@ -517,9 +585,9 @@ export default {
   },
   methods: {
     logout() {
-      window.sessionStorage.removeItem("ui");
+      window.sessionStorage.removeItem('ui');
       this.ui = {};
-      this.index = "1";
+      this.index = '1';
     },
     login(formName) {
       this.$refs[formName].validate(async valid => {
@@ -528,24 +596,33 @@ export default {
             ...this.ruleForm,
             password: this.md5(this.ruleForm.password)
           };
-          let { data } = await axios("/backend/login", {
+          let { data } = await axios('/backend/login', {
             params: form
           });
           if (data.code == 200) {
             this.ui = data.data;
-            window.sessionStorage.setItem("ui", JSON.stringify(data.data));
+            window.sessionStorage.setItem('ui', JSON.stringify(data.data));
             document.cookie = `sessionId=${data.data.sessionId}`;
             this.getData();
           } else {
-            this.$alert(data.msg, "登录错误", {
-              confirmButtonText: "确定",
-              type: "warning"
+            this.$alert(data.msg, '登录错误', {
+              confirmButtonText: '确定',
+              type: 'warning'
             });
           }
         } else {
           return false;
         }
       });
+    },
+    setdate() {
+      if (this.dateTime) {
+        this.searchUser.startDate = this.dateTime[0];
+        this.searchUser.endDate = this.dateTime[1];
+      } else {
+        this.searchUser.startDate = null;
+        this.searchUser.endDate = null;
+      }
     },
     currentPage(val) {
       this.page.pageNum = val - 1;
@@ -562,7 +639,7 @@ export default {
       } else {
         form = Object.assign({}, this.page, this.search);
       }
-      let { data } = await axios("/backend/audit/auditList", {
+      let { data } = await axios('/backend/audit/auditList', {
         params: form
       });
       if (data.code == 200) {
@@ -572,7 +649,7 @@ export default {
       this.loading = false;
     },
     async views(id) {
-      let { data } = await axios("/backend/audit/detail", {
+      let { data } = await axios('/backend/audit/detail', {
         params: { id: id }
       });
       if (data.code == 200) {
@@ -595,13 +672,13 @@ export default {
         pass: form.pass
       };
       if (!form.pass && !form.msg) {
-        this.$alert("请输入审核意见", "提示", {
-          type: "warning"
+        this.$alert('请输入审核意见', '提示', {
+          type: 'warning'
         });
         return;
       }
-      let { data } = await axios("/backend/audit/audit", {
-        method: "post",
+      let { data } = await axios('/backend/audit/audit', {
+        method: 'post',
         params: form
       });
       if (data.code == 200) {
@@ -610,7 +687,7 @@ export default {
           this.abcde = {};
         }
         this.getData();
-        this.$message.success("审核成功");
+        this.$message.success('审核成功');
       } else {
         this.$message.error(data.msg);
       }
@@ -618,7 +695,12 @@ export default {
     async getDataUser() {
       this.loading = true;
       let form = this.pu;
-      if (
+      if ((this.searchUser.startDate && this.searchUser.endDate) || this.searchUser.company || this.searchUser.cityName) {
+        form = { ...this.pu, ...this.searchUser };
+      } else if (
+        this.searchUser.channel ||
+        // this.searchUser.company ||
+        // this.searchUser.cityName ||
         this.searchUser.name ||
         this.searchUser.phone ||
         this.searchUser.idCard
@@ -626,7 +708,8 @@ export default {
         form = this.searchUser;
         this.pu.pageNum = 0;
       }
-      let { data } = await axios("/backend/manager/list", {
+
+      let { data } = await axios('/backend/manager/list', {
         params: form
       });
       if (data.code == 200) {
@@ -644,78 +727,100 @@ export default {
       this.getDataUser();
     },
     async changePhone() {
-      let { data } = await axios("/backend/manager/changePhone", {
-        method: "post",
+      let { data } = await axios('/backend/manager/changePhone', {
+        method: 'post',
         params: this.abcdef
       });
       if (data.code == 200) {
         this.getDataUser();
         this.abcdef = {};
-        this.$message.success("修改成功");
+        this.$message.success('修改成功');
         this.dialog = false;
       } else {
         this.$message.error(data.msg);
       }
     },
-
+    async memoSure() {
+      let { data } = await axios('/backend/manager/memo', {
+        method: 'post',
+        params: this.memo
+      });
+      if (data.code == 200) {
+        this.getDataUser();
+        this.memo = {};
+        this.$message.success('备注成功');
+        this.memoDialog = false;
+      } else {
+        this.$message.error(data.msg);
+      }
+    },
+    // async viewMemo(id) {
+    //   let { data } = await axios("/backend/manager/memo", {
+    //     method: "get",
+    //     params: { id: id }
+    //   });
+    //   if (data.code == 200) {
+    //     this.$message(data.data[0].memo);
+    //   } else {
+    //     this.$message.error(data.msg);
+    //   }
+    // },
     async freeze(id) {
-      let { data } = await axios("/backend/manager/freeze", {
-        method: "post",
+      let { data } = await axios('/backend/manager/freeze', {
+        method: 'post',
         params: { id: id }
       });
       if (data.code == 200) {
-        this.$message.success("冻结成功");
+        this.$message.success('冻结成功');
         this.getDataUser();
       } else {
-        this.$message.error("已经冻结，请勿重复操作");
+        this.$message.error('已经冻结，请勿重复操作');
       }
     },
 
     async thaw(id) {
-      let { data } = await axios("/backend/manager/thaw", {
-        method: "post",
+      let { data } = await axios('/backend/manager/thaw', {
+        method: 'post',
         params: { id: id }
       });
       if (data.code == 200) {
-        this.$message.success("解冻成功");
+        this.$message.success('解冻成功');
         this.getDataUser();
       } else {
-        this.$message.error("已经解冻，请勿重复操作");
+        this.$message.error('已经解冻，请勿重复操作');
       }
     },
 
     async initCert(id) {
-      let { data } = await axios("/backend/manager/initCert", {
-        method: "post",
+      let { data } = await axios('/backend/manager/initCert', {
+        method: 'post',
         params: { id: id }
       });
       if (data.code == 200) {
-        this.$message.success("重置成功");
+        this.$message.success('重置成功');
         this.getDataUser();
       } else {
         if (data.code == -8) {
-          this.$message.error("账号已冻结，状态不可更改");
+          this.$message.error('账号已冻结，状态不可更改');
           this.getDataUser();
         } else {
-          this.$message.error("已经重置，请勿重复操作");
+          this.$message.error('已经重置，请勿重复操作');
         }
       }
     },
 
     async backOrder() {
-      let { data } = await axios("/backend/refund", {
-        method: "post",
+      let { data } = await axios('/backend/refund', {
+        method: 'post',
         params: this.backForm
       });
       if (data.code == 200) {
         this.backTable = [];
-        this.$message.success("退单成功");
+        this.$message.success('退单成功');
         // this.backSearch();
       } else {
         if (data.code == -3) {
-          this.$message.error(
-            "校验失败，订单不存在 | 已退过 | 超时 | 有订单没流水！"
-          );
+          this.$message.error('校验失败，订单不存在 | 已退过 | 超时 | 有订单没流水！');
           // this.backSearch();
         } else {
           this.$message.error(data.msg);
@@ -726,8 +831,8 @@ export default {
     async backSearch() {
       this.loading = true;
       // let { data } = await axios("http://www.congrong-inc.com/backend/orderInfo",{
-      let { data } = await axios("/backend/orderInfo", {
-        method: "post",
+      let { data } = await axios('/backend/orderInfo', {
+        method: 'post',
         params: this.backForm
       });
       if (data.code == 200) {
@@ -735,7 +840,7 @@ export default {
       } else {
         this.backTable = [];
         if (data.code == -3) {
-          this.$message.error("查询失败");
+          this.$message.error('查询失败');
         } else {
           this.$message.error(data.msg);
         }
