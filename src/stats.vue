@@ -17,27 +17,94 @@ Create Time  : 2020-11-01
       </el-form>
     </div>
     <div class="app-content" :key="key">
-      <div class="box">
-        <div class="item">
-          <ve-line v-bind="chartData.all_register_num" />
+      <el-card header="loanDate">
+        <div class="w">
+          <div class="title">register</div>
+          <div class="box">
+            <div class="item">
+              <ve-line v-bind="chartData.register.all" :loading="loading" />
+            </div>
+            <div class="item">
+              <ve-histogram v-bind="chartData.register.channel" :loading="loading" />
+            </div>
+            <div class="item">
+              <ve-pie v-bind="chartData.register.ratio" :loading="loading" />
+            </div>
+          </div>
         </div>
-        <div class="item">
-          <ve-histogram v-bind="chartData.channel_register_num" />
+        <div class="w">
+          <div class="title">LoanBuy</div>
+          <div class="box">
+            <div class="item">
+              <ve-line v-bind="chartData.LoanBuy.all" :loading="loading" />
+            </div>
+            <div class="item">
+              <ve-histogram v-bind="chartData.LoanBuy.channel" :loading="loading" />
+            </div>
+            <div class="item">
+              <ve-pie v-bind="chartData.LoanBuy.ratio" :loading="loading" />
+            </div>
+          </div>
         </div>
-        <div class="item">
-          <ve-pie v-bind="chartData.ratio" />
+        <div class="w">
+          <div class="title">EffectNum</div>
+          <div class="box">
+            <div class="item">
+              <ve-line v-bind="chartData.EffectNum.all" :loading="loading" />
+            </div>
+            <div class="item">
+              <ve-histogram v-bind="chartData.EffectNum.channel" :loading="loading" />
+            </div>
+            <div class="item">
+              <ve-pie v-bind="chartData.EffectNum.ratio" :loading="loading" />
+            </div>
+          </div>
         </div>
-      </div>
+      </el-card>
+
+      <el-card header="managerDate">
+        <div class="w">
+          <div class="title">allManagerPassNum</div>
+          <div class="box">
+            <div class="item">
+              <ve-line v-bind="chartData.ManagerPassNum.all" :loading="loading" />
+            </div>
+            <div class="item">
+              <ve-histogram v-bind="chartData.ManagerPassNum.channel" :loading="loading" />
+            </div>
+            <div class="item">
+              <ve-pie v-bind="chartData.ManagerPassNum.ratio" :loading="loading" />
+            </div>
+          </div>
+        </div>
+        <div class="w">
+          <div class="title">allManagerRegisterNum</div>
+          <div class="box">
+            <div class="item">
+              <ve-line v-bind="chartData.ManagerRegisterNum.all" :loading="loading" />
+            </div>
+            <div class="item">
+              <ve-histogram :loading="loading" v-bind="chartData.ManagerRegisterNum.channel" />
+            </div>
+            <div class="item">
+              <ve-pie v-bind="chartData.ManagerRegisterNum.ratio" :loading="loading" />
+            </div>
+          </div>
+        </div>
+
+      </el-card>
     </div>
   </div>
 </template>
 <script>
 import axios from 'axios';
 axios.defaults.withCredentials = true;
+import 'v-charts/lib/style.css';
 export default {
   name: 'stats',
   data() {
     return {
+      loading: true,
       key: 0,
       dateTime: null,
       search: { starTime: null, endTime: null },
@@ -73,50 +140,357 @@ export default {
         ]
       },
       chartData: {
-        all_register_num: {
-          data: {
-            columns: [],
-            rows: []
-          },
-          extend: { 'xAxis.0.axisLabel.rotate': 60 },
-          'legend-visible': false,
-          colors: ['#409EFF', '#20a0ff', '#c23531', '#749f83', '#2f4554', '#61a0a8', '#d48265', '#91c7ae', '#ca8622', '#bda29a', '#6e7074', '#546570', '#c4ccd3'],
-          settings: {
-            grid: { left: 0, right: 0, bottom: 0 },
-            showline: [],
-            stack: {},
-            labelMap: {
-              all_register_num: '用户总数'
+        register: {
+          all: {
+            title: { text: '总注册数' },
+            data: {
+              columns: [],
+              rows: []
             },
-            yAxisName: ['总注册量']
+            extend: { 'xAxis.0.axisLabel.rotate': 60 },
+            'legend-visible': false,
+            'judge-width': true,
+            height: '100%',
+            colors: ['#409EFF'],
+            toolbox: {
+              feature: {
+                magicType: { type: ['line', 'bar'] },
+                saveAsImage: {}
+              }
+            },
+            settings: {
+              showline: [],
+              stack: {},
+              labelMap: {
+                all_register_num: '用户总数'
+              },
+              yAxisName: ['总注册量']
+            }
+          },
+          channel: {
+            title: { text: '渠道注册数' },
+            data: {
+              columns: [],
+              rows: []
+            },
+            extend: { 'xAxis.0.axisLabel.rotate': 60 },
+            'legend-visible': false,
+            'judge-width': true,
+            height: '100%',
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              }
+            },
+            settings: {
+              showline: [],
+              stack: {},
+              legendLimit: 5,
+              yAxisName: ['渠道注册']
+            }
+          },
+          ratio: {
+            title: { text: '渠道注册占比' },
+            data: {
+              columns: [],
+              rows: []
+            },
+            'legend-visible': false,
+            'judge-width': true,
+            height: '100%',
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              }
+            },
+            settings: {
+              legendLimit: 5,
+              // labelLine: { show: true },
+              label: { show: false, position: 'inside' },
+              radius: 150
+            }
           }
         },
-        channel_register_num: {
-          data: {
-            columns: [],
-            rows: []
-          },
-          extend: { 'xAxis.0.axisLabel.rotate': 60 },
-          'legend-visible': false,
-          colors: ['#409EFF', '#20a0ff', '#c23531', '#749f83', '#2f4554', '#61a0a8', '#d48265', '#91c7ae', '#ca8622', '#bda29a', '#6e7074', '#546570', '#c4ccd3'],
-          settings: {
-            grid: { left: 0, right: 0, bottom: 0 },
-            showline: [],
-            stack: {},
-            labelMap: {
-              register_num: '注册数量'
+        LoanBuy: {
+          all: {
+            title: { text: '总注册数' },
+            data: {
+              columns: [],
+              rows: []
             },
-            yAxisName: ['渠道注册']
+            extend: { 'xAxis.0.axisLabel.rotate': 60 },
+            'legend-visible': false,
+            'judge-width': true,
+            height: '100%',
+            colors: ['#409EFF'],
+            toolbox: {
+              feature: {
+                magicType: { type: ['line', 'bar'] },
+                saveAsImage: {}
+              }
+            },
+            settings: {
+              showline: [],
+              stack: {},
+              labelMap: {
+                all_register_num: '用户总数'
+              },
+              yAxisName: ['总注册量']
+            }
+          },
+          channel: {
+            title: { text: '渠道注册数' },
+            data: {
+              columns: [],
+              rows: []
+            },
+            extend: { 'xAxis.0.axisLabel.rotate': 60 },
+            'legend-visible': false,
+            'judge-width': true,
+            height: '100%',
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              }
+            },
+            settings: {
+              showline: [],
+              stack: {},
+              legendLimit: 5,
+              yAxisName: ['渠道注册']
+            }
+          },
+          ratio: {
+            title: { text: '渠道注册占比' },
+            data: {
+              columns: [],
+              rows: []
+            },
+            'legend-visible': false,
+            'judge-width': true,
+            height: '100%',
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              }
+            },
+            settings: {
+              legendLimit: 5,
+              // labelLine: { show: true },
+              label: { show: false, position: 'inside' },
+              radius: 150
+            }
           }
         },
-        ratio: {
-          data: {
-            columns: [],
-            rows: []
+        EffectNum: {
+          all: {
+            title: { text: '总注册数' },
+            data: {
+              columns: [],
+              rows: []
+            },
+            extend: { 'xAxis.0.axisLabel.rotate': 60 },
+            'legend-visible': false,
+            'judge-width': true,
+            height: '100%',
+            colors: ['#409EFF'],
+            toolbox: {
+              feature: {
+                magicType: { type: ['line', 'bar'] },
+                saveAsImage: {}
+              }
+            },
+            settings: {
+              showline: [],
+              stack: {},
+              labelMap: {
+                all_register_num: '用户总数'
+              },
+              yAxisName: ['总注册量']
+            }
           },
-          'legend-visible': false,
-          settings: {
-            grid: { left: 0, right: 0, bottom: 0 }
+          channel: {
+            title: { text: '渠道注册数' },
+            data: {
+              columns: [],
+              rows: []
+            },
+            extend: { 'xAxis.0.axisLabel.rotate': 60 },
+            'legend-visible': false,
+            'judge-width': true,
+            height: '100%',
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              }
+            },
+            settings: {
+              showline: [],
+              stack: {},
+              legendLimit: 5,
+              yAxisName: ['渠道注册']
+            }
+          },
+          ratio: {
+            title: { text: '渠道注册占比' },
+            data: {
+              columns: [],
+              rows: []
+            },
+            'legend-visible': false,
+            'judge-width': true,
+            height: '100%',
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              }
+            },
+            settings: {
+              legendLimit: 5,
+              // labelLine: { show: true },
+              label: { show: false, position: 'inside' },
+              radius: 150
+            }
+          }
+        },
+        ManagerRegisterNum: {
+          all: {
+            title: { text: '总注册数' },
+            data: {
+              columns: [],
+              rows: []
+            },
+            extend: { 'xAxis.0.axisLabel.rotate': 60 },
+            'legend-visible': false,
+            'judge-width': true,
+            height: '100%',
+            colors: ['#409EFF'],
+            toolbox: {
+              feature: {
+                magicType: { type: ['line', 'bar'] },
+                saveAsImage: {}
+              }
+            },
+            settings: {
+              showline: [],
+              stack: {},
+              labelMap: {
+                all_register_num: '用户总数'
+              },
+              yAxisName: ['总注册量']
+            }
+          },
+          channel: {
+            title: { text: '渠道注册数' },
+            data: {
+              columns: [],
+              rows: []
+            },
+            extend: { 'xAxis.0.axisLabel.rotate': 60 },
+            'legend-visible': false,
+            'judge-width': true,
+            height: '100%',
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              }
+            },
+            settings: {
+              showline: [],
+              stack: {},
+              legendLimit: 5,
+              yAxisName: ['渠道注册']
+            }
+          },
+          ratio: {
+            title: { text: '渠道注册占比' },
+            data: {
+              columns: [],
+              rows: []
+            },
+            'legend-visible': false,
+            'judge-width': true,
+            height: '100%',
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              }
+            },
+            settings: {
+              legendLimit: 5,
+              label: { show: false, position: 'inside' },
+              radius: 150
+            }
+          }
+        },
+        ManagerPassNum: {
+          all: {
+            title: { text: '总注册数' },
+            data: {
+              columns: [],
+              rows: []
+            },
+            extend: { 'xAxis.0.axisLabel.rotate': 60 },
+            'legend-visible': false,
+            'judge-width': true,
+            height: '100%',
+            colors: ['#409EFF'],
+            toolbox: {
+              feature: {
+                magicType: { type: ['line', 'bar'] },
+                saveAsImage: {}
+              }
+            },
+            settings: {
+              showline: [],
+              stack: {},
+              labelMap: {
+                all_register_num: '用户总数'
+              },
+              yAxisName: ['总注册量']
+            }
+          },
+          channel: {
+            title: { text: '渠道注册数' },
+            data: {
+              columns: [],
+              rows: []
+            },
+            extend: { 'xAxis.0.axisLabel.rotate': 60 },
+            'legend-visible': false,
+            'judge-width': true,
+            height: '100%',
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              }
+            },
+            settings: {
+              showline: [],
+              stack: {},
+              legendLimit: 5,
+              yAxisName: ['渠道注册']
+            }
+          },
+          ratio: {
+            title: { text: '渠道注册占比' },
+            data: {
+              columns: [],
+              rows: []
+            },
+            'legend-visible': false,
+            'judge-width': true,
+            height: '100%',
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              }
+            },
+            settings: {
+              legendLimit: 5,
+              label: { show: false, position: 'inside' },
+              radius: 150
+            }
           }
         }
       }
@@ -128,56 +502,42 @@ export default {
 
   methods: {
     async getData() {
-      let { data } = await axios('/jud/select-channel', {
+      let { data } = await axios('/backend/order/select-channel', {
         params: this.search
       });
-      console.log(data);
       if (data.code == 200) {
-        let dataaa = {
-          // Array => colums放置的是维度的字段组成的数组, 第一个元素是 X 轴坐标; 第二个元素为 Y 轴坐标
-          // Array => rows 放置的是源数据, colums数组里的元素,必须在源数据里作为 key 出现;
-          loanDate: {
-            all_register_num: {
-              // 按照日期展示总用户数
-              columns: ['date', 'all_register_num'],
-              rows: [
-                { date: '2020年10月1日', all_register_num: 140 },
-                { date: '2020年10月2日', all_register_num: 140 },
-                { date: '2020年10月3日', all_register_num: 140 }
-              ]
-            },
-            channel_register_num: {
-              // 按照日期展示各渠道注册用户数
-              columns: ['date', '渠道1', '渠道2', '渠道3'],
-              rows: [
-                { date: '2020年10月1日', 渠道1: 15, 渠道2: 35, 渠道3: 10 },
-                { date: '2020年10月2日', 渠道1: 15, 渠道2: 35, 渠道3: 10 },
-                { date: '2020年10月3日', 渠道1: 15, 渠道2: 35, 渠道3: 10 }
-              ]
-            },
-            ratio: {
-              // 展示时间段内,各渠道注册用户总数与所有渠道总数比例
-              columns: ['channel', 'channel_register_num'],
-              rows: [
-                { channel: '渠道1', channel_register_num: 15 },
-                { channel: '渠道2', channel_register_num: 15 },
-                { channel: '渠道3', channel_register_num: 15 }
-              ]
-            }
-          }
-        };
-        this.chartData.all_register_num.data.columns = dataaa.loanDate.all_register_num.columns;
-        this.chartData.all_register_num.data.rows = dataaa.loanDate.all_register_num.rows;
+        // loanDate register
+        this.chartData.register.all.data = data.data.loanDate.allLoanRegisterNum;
+        this.chartData.register.channel.settings.stack = { channel: data.data.loanDate.channelLoanRegisterNum.columns };
+        this.chartData.register.channel.data = data.data.loanDate.channelLoanRegisterNum;
+        this.chartData.register.ratio.data = data.data.loanDate.ratioLoanRegister;
+        // allLoanBuyNum
+        this.chartData.LoanBuy.all.data = data.data.loanDate.allLoanBuyNum;
+        this.chartData.LoanBuy.channel.settings.stack = { channel: data.data.loanDate.channelLoanBuyNum.columns };
+        this.chartData.LoanBuy.channel.data = data.data.loanDate.channelLoanBuyNum;
+        this.chartData.LoanBuy.ratio.data = data.data.loanDate.ratioLoanBuy;
 
-        this.chartData.channel_register_num.settings.stack = { channel: dataaa.loanDate.channel_register_num.columns };
-        this.chartData.channel_register_num.data.columns = dataaa.loanDate.channel_register_num.columns;
-        this.chartData.channel_register_num.data.rows = dataaa.loanDate.channel_register_num.rows;
+        //
+        this.chartData.EffectNum.all.data = data.data.loanDate.allLoanEffectNum;
+        this.chartData.EffectNum.channel.settings.stack = { channel: data.data.loanDate.channelLoanEffectNum.columns };
+        this.chartData.EffectNum.channel.data = data.data.loanDate.channelLoanEffectNum;
+        this.chartData.EffectNum.ratio.data = data.data.loanDate.ratioLoanEffect;
 
-        this.chartData.ratio.data.columns = dataaa.loanDate.ratio.columns;
-        this.chartData.ratio.data.rows = dataaa.loanDate.ratio.rows;
+        //
+        // managerDate register
+        this.chartData.ManagerRegisterNum.all.data = data.data.managerDate.allManagerRegisterNum;
+        this.chartData.ManagerRegisterNum.channel.settings.stack = { channel: data.data.managerDate.channelManagerRegisterNum.columns };
+        this.chartData.ManagerRegisterNum.channel.data = data.data.managerDate.channelManagerRegisterNum;
+        this.chartData.ManagerRegisterNum.ratio.data = data.data.managerDate.ratioManager;
+
+        this.chartData.ManagerPassNum.all.data = data.data.managerDate.allManagerPassNum;
+        this.chartData.ManagerPassNum.channel.settings.stack = { channel: data.data.managerDate.channelManagerPassNum.columns };
+        this.chartData.ManagerPassNum.channel.data = data.data.managerDate.channelManagerPassNum;
+        this.chartData.ManagerPassNum.ratio.data = data.data.managerDate.ratioManagerPass;
 
         this.key = Math.random();
       }
+      this.loading = false;
     },
     backSearch() {},
     setdate() {
@@ -197,6 +557,26 @@ export default {
   overflow: auto;
 }
 .app-content {
+  height: 100%;
+  overflow: auto !important;
+  .el-card {
+    margin: 20px 0;
+    .w {
+      overflow: hidden;
+      width: 100%;
+      margin-top: 20px;
+      border: 1px solid #f5f5f5;
+      padding: 0 5px;
+    }
+    .title {
+      line-height: 40px;
+      font-size: 20px;
+      margin: 0 -5px;
+      margin-bottom: 10px;
+      background: #f5f5f5;
+      padding: 3px 5px;
+    }
+  }
   .box {
     display: flex;
     justify-content: space-evenly;
@@ -204,7 +584,7 @@ export default {
     .item {
       min-width: 400px;
       width: 100%;
-      height: 250px;
+      height: 400px;
     }
   }
 }

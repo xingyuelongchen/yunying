@@ -35,7 +35,7 @@
               <span slot="title">订单列表</span>
             </el-menu-item>
             <el-menu-item index="5">
-              <i class="el-icon-s-order"></i>
+              <i class="el-icon-s-data"></i>
               <span slot="title">报表统计</span>
             </el-menu-item>
           </el-menu>
